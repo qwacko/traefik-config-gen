@@ -39,16 +39,15 @@ def generateOutput():
             output["http"]["routers"][f"router-{trimmedName}"]=  generateDefaultRouter(trimmedName,current_container.labels['traefikCompile.address'] )  
             output["http"]["services"][f"service-{trimmedName}"] = generateDefaultService(current_container.labels['traefikCompile.port'])
     
-    realOutput = output.copy()
-    getOtherOutput(output)
+    # realOutput = output.copy()
+    output = getOtherOutput(output)
     
-    return realOutput
+    return output
 
 def getOtherOutput(inputData):
     otherHosts = json.loads(environ.get("CHILD_HOSTS"))
 
     for host in otherHosts:
-        print(f'Host = {host}')
         response = urlopen(host)
         
         data_json = json.loads(response.read())
@@ -56,6 +55,5 @@ def getOtherOutput(inputData):
         inputData["http"]["routers"] = inputData["http"]["routers"] | data_json["http"]["routers"]
         inputData["http"]["services"] = inputData["http"]["services"] | data_json["http"]["services"]
 
-    print(inputData)
     
     return inputData
