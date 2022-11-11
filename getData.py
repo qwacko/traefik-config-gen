@@ -2,25 +2,11 @@ import docker
 from os import environ 
 import json
 from urllib.request import urlopen
+import jinja2
 
-TARGET_HOST  = environ.get('TARGET_HOST')
-HOST_NAME  = environ.get('HOST_NAME')
+environment = jinja2.Environment()
 
-def generateDefaultRouter(trimmedName,address):
-
-    defaultRouter = json.loads(environ.get("DEFAULT_ROUTER"))
-    defaultRouter["service"] = f"service-{trimmedName}"
-    defaultRouter["rule"] = f"Host(`{address}`)"
-
-    return defaultRouter
-
-
-def generateDefaultService(address):
-
-    defaultService = json.loads(environ.get("DEFAULT_SERVICE"))
-    defaultService["loadBalancer"]["servers"][0]["url"] = f"http://{TARGET_HOST}:{address}"
-
-    return defaultService
+keyPrefix = "traefikConfigGen."
 
 
 def generateOutput():
@@ -33,11 +19,31 @@ def generateOutput():
     
     for current_container in client.containers.list():
         currentKeys = current_container.labels.keys()
-        if 'traefikCompile.port' in currentKeys and 'traefikCompile.address' in currentKeys:
-            trimmedName = f"{HOST_NAME}-{current_container.name.lower().replace(' ','-')}"
 
-            output["http"]["routers"][f"router-{trimmedName}"]=  generateDefaultRouter(trimmedName,current_container.labels['traefikCompile.address'] )  
-            output["http"]["services"][f"service-{trimmedName}"] = generateDefaultService(current_container.labels['traefikCompile.port'])
+        includedKeys = [a for a in currentKeys if a.find(keyPrefix) == 0]
+
+
+        if len(includedKeys) > 0:
+
+            # Build the name of teh service and router based on the host and container name
+            trimmedName = f"{environ.get('HOST_NAME', 'Host')}-{current_container.name.lower().replace(' ','-')}"            
+            SERVICE_NAME = f"service-{trimmedName}"
+            ROUTER_NAME = f"router-{trimmedName}"
+
+
+            includedDict = {el.replace(keyPrefix, ""): current_container.labels[el] for el in includedKeys}
+
+            routerTemplateName = includedDict.get("routerTemplateName","ROUTER_DEFAULT")
+            serviceTemplateName = includedDict.get("serviceTemplateName","SERVICE_DEFAULT")
+        
+            dataForRender = {"container" : includedDict, "host": environ, "traefik": {"ROUTER_NAME": ROUTER_NAME, "SERVICE_NAME": SERVICE_NAME}}
+
+            # Use the Jinja engine to build the output strings
+            router = environment.from_string(environ.get(routerTemplateName, "{'Router':'Not Found'}")).render(**dataForRender)
+            service = environment.from_string(environ.get(serviceTemplateName, "{'Service':'Not Found'}")).render(**dataForRender)
+
+            output["http"]["routers"][ROUTER_NAME]=  json.loads(router)
+            output["http"]["services"][SERVICE_NAME] = json.loads(service)
     
     # realOutput = output.copy()
     output = getOtherOutput(output)
