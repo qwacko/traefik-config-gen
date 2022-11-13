@@ -7,6 +7,8 @@ import jinja2
 environment = jinja2.Environment()
 
 keyPrefix = "traefikConfigGen."
+defaultRouterTemplate = '{"entrypoints" :["{{host.ENTRYPOINT}}"],"service" : "{{traefik.SERVICE_NAME}}", "rule" : "Host(`{{container.address}}`)"}'
+defaultServiceTemplate = '{"loadBalancer" : { "servers" : [{ "url" : "http://{{host.TARGET_HOST}}:{{container.port}}" }], "passHostHeader": "false" }}'
 
 
 def generateOutput():
@@ -39,8 +41,8 @@ def generateOutput():
             dataForRender = {"container" : includedDict, "host": environ, "traefik": {"ROUTER_NAME": ROUTER_NAME, "SERVICE_NAME": SERVICE_NAME}}
 
             # Use the Jinja engine to build the output strings
-            router = environment.from_string(environ.get(routerTemplateName, "{'Router':'Not Found'}")).render(**dataForRender)
-            service = environment.from_string(environ.get(serviceTemplateName, "{'Service':'Not Found'}")).render(**dataForRender)
+            router = environment.from_string(environ.get(routerTemplateName, defaultRouterTemplate)).render(**dataForRender)
+            service = environment.from_string(environ.get(serviceTemplateName, defaultServiceTemplate)).render(**dataForRender)
 
             output["http"]["routers"][ROUTER_NAME]=  json.loads(router)
             output["http"]["services"][SERVICE_NAME] = json.loads(service)
