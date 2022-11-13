@@ -83,11 +83,11 @@ The user can override teh deafult service (`SERVICE_DEFAULT`) and router (`ROUTE
 | Variable        | Contents          
 | ------------- |:-------------:| 
 | `container`      | All labels from the container that are prefixed with `traefikConfigGen.` with the prefix replaced with `container.` (i.e. `traefikConfigGen.port` becomes `container.port`) 
-| `host`      | All environment variables from the "master" container. Note that it is possible to not use these, as values passed to an environment variable can also be passed directly into the custom template.|
+| `host`      | All environment variables from the "master" container. Note that it is possible have the system work without using these, as values passed to an environment variable could instead also be written directly into a custom template.|
 | `traefik.SERVICE_NAME` | Lower case, uniqe name for service (automatically generated). Should be used in the router tepmlate to refer to the correct service |
 | `traefik.ROUTER_NAME` | Lower case, uniqe name for router (automatically generated). |
 
-## Additional Named Templates
+### Additional Named Templates
 
 If different containers need different templates, then additional named templates can be setup. These can be any titled environment variable on the master container (i.e. `SERVICE_HTTPS` or `ROUTER_BASICAUTH`).
 
