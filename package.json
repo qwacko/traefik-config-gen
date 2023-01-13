@@ -17,6 +17,8 @@
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
     "@types/dockerode": "^3.3.14",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
     "prettier": "^2.8.2",
     "prettier-plugin-svelte": "^2.9.0",
     "prisma": "^4.8.1",
@@ -29,8 +31,12 @@
     "@lucia-auth/adapter-prisma": "^0.2.2",
     "@lucia-auth/sveltekit": "^0.5.2",
     "@prisma/client": "^4.8.1",
+    "@sveltejs/adapter-node": "^1.1.0",
     "dockerode": "^3.3.4",
-    "lucia-auth": "^0.4.3"
+    "eslint": "^8.31.0",
+    "eslint-plugin-svelte": "^2.14.1",
+    "lucia-auth": "^0.4.3",
+    "zod": "^3.20.2"
   },
   "type": "module"
 }
