@@ -7,8 +7,10 @@ export let data: PageData
 
 <div class="flex flex-col items-stretch ">
   {#each data.sources as source}
-    <Card class="my-1 mx-2 min-w-full hover:bg-gray-100">
+    <a
+      class="my-1 mx-2 min-w-full rounded-md shadow-lg border-2 p-6 hover:bg-gray-100"
+      href="{`/sources/${source.id}`}">
       <P>{source.title}</P>
-    </Card>
+    </a>
   {/each}
 </div>

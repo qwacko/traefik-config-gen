@@ -1,7 +1,6 @@
 <script lang="ts">
 import { invalidateAll } from '$app/navigation'
 import { page } from '$app/stores'
-import SignOutButton from '$lib/components/SignOutButton.svelte'
 
 import { handleSession, signOut } from '@lucia-auth/sveltekit/client'
 import {
