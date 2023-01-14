@@ -8,9 +8,6 @@ $: id = $page.params.id
 
 $: sourceData =
   data.sources && id ? data.sources.find((item) => item.id === id) : undefined
-
-$: console.log('Sources', data.sources)
-$: console.log('id', id)
 </script>
 
 {#if sourceData}
