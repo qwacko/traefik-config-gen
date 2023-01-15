@@ -5,6 +5,7 @@ import { Alert } from 'flowbite-svelte'
 import { Card, Badge, Accordion, AccordionItem } from 'flowbite-svelte'
 import dayjs from 'dayjs'
 import EditModal from './EditModal.svelte'
+import DisplayRawData from './DisplayRawData.svelte'
 
 export let data: PageData
 $: id = $page.params.id
@@ -50,21 +51,7 @@ $: dateDiff = sourceData?.lastUpdated
       </div>
     </div>
     <Accordion class="w-full rounded-md ">
-      {#if data.sourceRawData}
-        <AccordionItem>
-          <span slot="header"
-            >Raw Data {#if 'error' in data.sourceRawData}(Error){/if}</span>
-          {#if 'error' in data.sourceRawData}
-            <div>
-              {data.sourceRawData.error}
-            </div>
-          {:else}
-            <div>
-              {JSON.stringify(data.sourceRawData)}
-            </div>
-          {/if}
-        </AccordionItem>
-      {/if}
+      <DisplayRawData data="{data.sourceRawData}" />
     </Accordion>
   </div>
 {:else}
