@@ -6,6 +6,8 @@ import {
 } from '@sveltejs/kit'
 import type { z } from 'zod'
 import type { MaybePromise } from '$app/forms'
+import { router, type RouterCaller } from '$lib/trpc/router'
+import { createContext } from '$lib/trpc/context'
 
 type FormErrorsType<keys extends string | number | symbol> = {
   errors: {
@@ -24,11 +26,14 @@ export const validatedActionHandler = <
 >({
   validator,
   processingFunction,
+  requireSession = true,
 }: {
+  requireSession?: boolean
   validator: z.Schema<ValidatedInput>
-  processingFunction: (data: {
+  processingFunction: <T>(data: {
     requestData: RequestEvent<RouteParams, RouteId>
     input: ValidatedInput
+    trpc: RouterCaller
   }) => MaybePromise<
     ActionFailure<FormErrorsType<keyof ValidatedInput>> | FunctionReturn
   >
@@ -38,6 +43,15 @@ export const validatedActionHandler = <
   ): Promise<
     ActionFailure<FormErrorsType<keyof ValidatedInput>> | FunctionReturn
   > => {
+    if (requireSession) {
+      const session = await inputData.locals.validate()
+      if (!session) {
+        return fail(400, { errors: { errors: ['Not Signed In'] } })
+      }
+    }
+
+    const trpc = router.createCaller(await createContext(inputData))
+
     const validatedData = validator.safeParse(
       Object.fromEntries(await inputData.request.formData())
     )
@@ -55,6 +69,7 @@ export const validatedActionHandler = <
     return processingFunction({
       requestData: inputData,
       input: validatedData.data,
+      trpc,
     })
   }) satisfies Action<RouteParams, void | Record<string, any>, RouteId>
 

@@ -15,6 +15,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.48.1
   autoprefixer: ^10.4.7
   classnames: ^2.3.2
+  dayjs: ^1.11.7
   dockerode: ^3.3.4
   dotenv: ^16.0.3
   eslint: ^8.31.0
@@ -44,6 +45,7 @@ dependencies:
   '@sveltejs/adapter-node': 1.1.0_l5ueyfihz3gpzzvvyo2ean5u3e
   '@trpc/client': 10.9.0_@trpc+server@10.9.0
   '@trpc/server': 10.9.0
+  dayjs: 1.11.7
   dockerode: 3.3.4
   dotenv: 16.0.3
   eslint: 8.31.0
@@ -961,6 +963,10 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}

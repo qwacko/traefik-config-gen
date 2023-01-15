@@ -23,5 +23,7 @@ const createSource = async () => {
       <Button on:click="{createSource}" size="sm" class="flex m-4">+</Button>
     </div>
   </div>
-  <slot />
+  <div class="w-full flex ">
+    <slot />
+  </div>
 </div>

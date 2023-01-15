@@ -1,12 +1,13 @@
-import { TRPCError } from '@trpc/server'
 import { t } from './t'
 import { authMiddleware } from './middleware/authMiddleware'
 import { getDockerInformation } from '$lib/server/docker/getDockerInformation'
-import { timeLogMiddleware } from './middleware/timeLogMiddleware'
+import {
+  sourceAddValidation,
+  sourceGetOutputValidation,
+  sourceUpdateValidation,
+} from './validation/sourcesValidation'
 import { z } from 'zod'
-
-const sourceTypeOptions = ['docker', 'manual', 'yaml', 'other'] as const
-const sourceTypeOptionsEditable = [...sourceTypeOptions]
+import { TRPCError } from '@trpc/server'
 
 export const router = t.router({
   greeting: t.procedure.query(async () => {
@@ -16,83 +17,51 @@ export const router = t.router({
     return 'Hello Authed User'
   }),
   getDockerInfo: t.procedure.use(authMiddleware).query(async ({ ctx }) => {
-    const dockerInfo = await getDockerInformation()
+    const dockerInfo = await getDockerInformation({})
     return true
   }),
   getSources: t.procedure
     .use(authMiddleware)
-    .output(
-      z.array(
-        z.object({
-          id: z.string().cuid(),
-          title: z.string(),
-          type: z
-            .string()
-            .superRefine((val, ctx) => {
-              if (
-                !sourceTypeOptions.includes(
-                  val as (typeof sourceTypeOptionsEditable)[0]
-                )
-              ) {
-                const options = [...sourceTypeOptions]
-                ctx.addIssue({
-                  message: `Incorrect Type ${val}`,
-                  code: 'invalid_enum_value',
-                  path: ctx.path,
-                  fatal: true,
-                  options,
-                  received: val,
-                })
-              }
-            })
-            .transform((val) => {
-              const data = sourceTypeOptions.reduce((prev, current) => {
-                if (val === current) {
-                  return current
-                }
-                return prev
-              }, 'docker')
-              return data
-            }),
-          address: z.string(),
-          autoDelete: z.boolean(),
-          enabled: z.boolean(),
-          parameters: z
-            .string()
-            .transform((data) => JSON.parse(data))
-            .optional()
-            .nullable(),
-          defaultRouterTemplateId: z.string().cuid().optional(),
-          defaultServiceTemplateId: z.string().cuid().optional(),
-        })
-      )
-    )
-    .query(async ({ ctx }) => {
-      const sources = await ctx.db.source.findMany()
-      return sources
-    }),
+    .output(sourceGetOutputValidation)
+    .query(async ({ ctx }) => ctx.db.source.findMany()),
   addSource: t.procedure
     .use(authMiddleware)
-    .input(
-      z.object({
-        title: z.string(),
-        type: z.enum(sourceTypeOptions),
-        address: z.string(),
-        autoDelete: z.boolean().optional().default(false),
-        enabled: z.boolean().optional().default(true),
-        parameters: z.object({}).catchall(z.string()).optional(),
-        defaultRouterTemplateId: z.string().cuid().optional(),
-        defaultServiceTemplateId: z.string().cuid().optional(),
+    .input(sourceAddValidation)
+    .mutation(async ({ input: data, ctx }) => ctx.db.source.create({ data })),
+  updateSource: t.procedure
+    .use(authMiddleware)
+    .input(sourceUpdateValidation)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input
+      return ctx.db.source.update({ where: { id }, data })
+    }),
+  getSourceRawData: t.procedure
+    .use(authMiddleware)
+    .input(z.object({ id: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const source = await ctx.db.source.findUniqueOrThrow({
+        where: { id: input.id },
       })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const { parameters, ...otherInput } = input
-      const parametersText = parameters ? JSON.stringify(parameters) : undefined
-      await ctx.db.source.create({
-        data: { parameters: parametersText, ...otherInput },
-      })
-      return true
+
+      const sourceType = source.type
+      const sourceAddress = source.address
+
+      if (sourceType === 'docker') {
+        try {
+          const returnData = await getDockerInformation({
+            socketPath: sourceAddress,
+          })
+          return returnData
+        } catch (e) {
+          console.log(e)
+          throw new TRPCError({
+            message: 'Error Getting Data From Socket',
+            code: 'BAD_REQUEST',
+          })
+        }
+      }
     }),
 })
 
 export type Router = typeof router
+export type RouterCaller = ReturnType<Router['createCaller']>
