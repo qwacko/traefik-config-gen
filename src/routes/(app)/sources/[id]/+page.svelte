@@ -6,6 +6,7 @@ import { Card, Badge, Accordion, AccordionItem } from 'flowbite-svelte'
 import dayjs from 'dayjs'
 import EditModal from './EditModal.svelte'
 import DisplayRawData from './DisplayRawData.svelte'
+import DisplayParameters from './DisplayParameters.svelte'
 
 export let data: PageData
 $: id = $page.params.id
@@ -29,7 +30,7 @@ $: dateDiff = sourceData?.lastUpdated
       <div class="flex text-xl flex-row gap-4 items-center">
         <div class="flex"><b>{sourceData.title}</b></div>
         <div class="flex">
-          <EditModal sourceData="{sourceData}" />
+          <EditModal sourceData={sourceData} />
         </div>
       </div>
       <div class="flex flex-row gap-2">
@@ -51,7 +52,11 @@ $: dateDiff = sourceData?.lastUpdated
       </div>
     </div>
     <Accordion class="w-full rounded-md ">
-      <DisplayRawData data="{data.sourceRawData}" />
+      <AccordionItem>
+        <span slot="header"> Parameters </span>
+        <DisplayParameters data={sourceData.parameters} id={sourceData.id} />
+      </AccordionItem>
+      <DisplayRawData data={data.sourceRawData} />
     </Accordion>
   </div>
 {:else}

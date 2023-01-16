@@ -7,7 +7,7 @@
   "plugins": ["prettier-plugin-svelte"],
   "svelteSortOrder": "options-scripts-markup-styles",
   "bracketSameLine": true,
-  "svelteStrictMode": true,
+  "svelteStrictMode": false,
   "svelteAllowShorthand": false,
   "svelteIndentScriptAndStyle": false
 }

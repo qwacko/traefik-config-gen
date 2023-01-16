@@ -8,8 +8,7 @@ export const actions = {
     validator: sourceAddValidation.omit({ parameters: true }),
     requireSession: true,
     processingFunction: async ({ input, trpc }) => {
-      console.log('Creating Source', input)
-      const data = await trpc.addSource(input)
+      const data = await trpc.source.addSource(input)
       if (data) {
         throw redirect(300, `/sources/${data.id}`)
       }

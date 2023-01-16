@@ -4,7 +4,7 @@ import { trpc } from '$lib/trpc/trpcClient'
 import { invalidateAll } from '$app/navigation'
 
 const createSource = async () => {
-  await trpc().addSource.mutate({
+  await trpc().source.addSource.mutate({
     address: '/var/run/docker.sock',
     title: 'Local Docker',
     type: 'docker',
@@ -20,7 +20,7 @@ const createSource = async () => {
       <Heading tag="h3" class="py-5 flex">Source</Heading>
     </div>
     <div class="flex">
-      <Button on:click="{createSource}" size="sm" class="flex m-4">+</Button>
+      <Button on:click={createSource} size="sm" class="flex m-4">+</Button>
     </div>
   </div>
   <div class="w-full flex ">

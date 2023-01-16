@@ -22,10 +22,8 @@ export const getDockerInformation = async ({
   const validatedDockerInfo = dockerInfoValidation.safeParse(dockerInfo)
 
   if (validatedDockerInfo.success) {
-    console.log('Docker Info', validatedDockerInfo.data)
     return validatedDockerInfo.data
   } else {
-    console.log('Docker Info Error', validatedDockerInfo.error.errors)
     throw new TRPCError({
       message: 'Error Getting Docker Info',
       code: 'INTERNAL_SERVER_ERROR',

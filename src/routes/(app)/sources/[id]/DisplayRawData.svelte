@@ -58,31 +58,30 @@ $: dataToUse = data
       <div class="flex flex-row gap-4">
         <div class="flex flex-col gap-2">
           <Label>Filter Title</Label>
-          <Input bind:value="{filterTitle}">
+          <Input bind:value={filterTitle}>
             <svelte:fragment slot="right">
               {#if filterTitle !== undefined}
-                <CloseButton on:click="{() => (filterTitle = undefined)}" />
+                <CloseButton on:click={() => (filterTitle = undefined)} />
               {/if}
             </svelte:fragment>
           </Input>
         </div>
         <div class="flex flex-col gap-2">
           <Label>Docker Label Key</Label>
-          <Input bind:value="{filterLabelKey}">
+          <Input bind:value={filterLabelKey}>
             <svelte:fragment slot="right">
               {#if filterLabelKey !== undefined}
-                <CloseButton on:click="{() => (filterLabelKey = undefined)}" />
+                <CloseButton on:click={() => (filterLabelKey = undefined)} />
               {/if}
             </svelte:fragment>
           </Input>
         </div>
         <div class="flex flex-col gap-2">
           <Label>Docker Label Value</Label>
-          <Input bind:value="{filterLabelValue}">
+          <Input bind:value={filterLabelValue}>
             <svelte:fragment slot="right">
               {#if filterLabelValue !== undefined}
-                <CloseButton
-                  on:click="{() => (filterLabelValue = undefined)}" />
+                <CloseButton on:click={() => (filterLabelValue = undefined)} />
               {/if}
             </svelte:fragment>
           </Input>
@@ -92,33 +91,33 @@ $: dataToUse = data
 
           <ButtonGroup>
             <Button
-              on:click="{() => (autoExpand = 0)}"
-              color="{autoExpand === 0 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 0)}
+              color={autoExpand === 0 ? 'blue' : 'alternative'}>
               None
             </Button>
             <Button
-              on:click="{() => (autoExpand = 1)}"
-              color="{autoExpand === 1 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 1)}
+              color={autoExpand === 1 ? 'blue' : 'alternative'}>
               1
             </Button>
             <Button
-              on:click="{() => (autoExpand = 3)}"
-              color="{autoExpand === 3 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 3)}
+              color={autoExpand === 3 ? 'blue' : 'alternative'}>
               3
             </Button>
             <Button
-              on:click="{() => (autoExpand = 5)}"
-              color="{autoExpand === 5 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 5)}
+              color={autoExpand === 5 ? 'blue' : 'alternative'}>
               5
             </Button>
             <Button
-              on:click="{() => (autoExpand = 10)}"
-              color="{autoExpand === 10 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 10)}
+              color={autoExpand === 10 ? 'blue' : 'alternative'}>
               10
             </Button>
             <Button
-              on:click="{() => (autoExpand = 10000)}"
-              color="{autoExpand === 10000 ? 'blue' : 'alternative'}">
+              on:click={() => (autoExpand = 10000)}
+              color={autoExpand === 10000 ? 'blue' : 'alternative'}>
               All
             </Button>
           </ButtonGroup>
@@ -130,7 +129,7 @@ $: dataToUse = data
         </div>
       {:else}
         <div class="flex flex-col">
-          <DisplayJSON sourceData="{dataToUse}" expandMin="{autoExpand}" />
+          <DisplayJSON sourceData={dataToUse} expandMin={autoExpand} />
         </div>
       {/if}
     </div>

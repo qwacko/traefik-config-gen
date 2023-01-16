@@ -19,7 +19,7 @@ export const load = (async (event) => {
   try {
     const rawQueryData = await router
       .createCaller(await createContext(event))
-      .getSourceRawData({ id: sourceId })
+      .source.getSourceRawData({ id: sourceId })
 
     return { sourceRawData: rawQueryData }
   } catch (e) {
@@ -35,6 +35,7 @@ export const actions = {
   update: validatedActionHandler({
     validator: sourceUpdateValidation,
     requireSession: true,
-    processingFunction: async ({ input, trpc }) => trpc.updateSource(input),
+    processingFunction: async ({ input, trpc }) =>
+      trpc.source.updateSource(input),
   }),
 } satisfies Actions
