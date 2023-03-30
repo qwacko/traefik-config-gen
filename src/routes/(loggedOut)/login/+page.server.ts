@@ -1,11 +1,18 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import { superValidate } from 'sveltekit-superforms/server';
 import { loginSchema } from './loginSchema';
+import { prisma } from '$lib/server/db';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load = async (event) => {
 	const form = await superValidate(event, loginSchema);
+	const userCount = await prisma.authUser.count();
+
+	if (userCount === 0) {
+		throw redirect(302, '/firstSignup');
+	}
+
 	return { form };
 };
 
