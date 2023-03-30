@@ -1,21 +1,38 @@
-import { validatedActionHandler } from '$lib/server/utils/validatedActionHandler'
-import { sourceAddValidation } from '$lib/trpc/validation/sourcesValidation'
+import { createContext } from '$lib/trpc/context'
+import { router } from '$lib/trpc/router'
 import { fail, redirect } from '@sveltejs/kit'
-import type { Actions } from './$types'
+import { superValidate } from 'sveltekit-superforms/server'
+import { createSourceValidation } from './createSourceValidation'
+
+export const load = async (event) => {
+  const createForm = await superValidate(event, createSourceValidation)
+  return { createForm }
+}
 
 export const actions = {
-  create: validatedActionHandler({
-    validator: sourceAddValidation.omit({ parameters: true }),
-    requireSession: true,
-    processingFunction: async ({ input, trpc }) => {
-      const data = await trpc.source.addSource(input)
+  createNew: async (event) => {
+    const context = await createContext(event)
+    const createForm = await superValidate(event, createSourceValidation, {
+      id: 'createSourceForm',
+    })
+    if (!createForm.valid) {
+      console.log('Invalid Form')
+      return fail(400, { createForm })
+    }
+
+    try {
+      const data = await router
+        .createCaller(context)
+        .source.addSource(createForm.data)
+
       if (data) {
         throw redirect(300, `/sources/${data.id}`)
       }
-
+      return { createForm }
+    } catch (error) {
       return fail(400, {
-        errors: { formErrors: ['Source Creation Unsuccessful'] },
+        createForm: { ...createForm, message: 'Error Creating Source' },
       })
-    },
-  }),
-} satisfies Actions
+    }
+  },
+}

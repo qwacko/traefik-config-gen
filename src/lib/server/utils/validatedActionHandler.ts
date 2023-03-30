@@ -56,6 +56,8 @@ export const validatedActionHandler = <
       Object.fromEntries(await inputData.request.formData())
     )
 
+    console.log('validatedData', validatedData)
+
     if (!validatedData.success) {
       const errorInfo = validatedData.error.flatten()
       const fieldErrors = errorInfo.fieldErrors as unknown as Record<

@@ -6,6 +6,6 @@ services:
     restart: always
     command: TCP-LISTEN:80,fork TCP:10.1.1.70:3000
     labels:
-      traefikConfigGen.port: 5043
+      traefikConfigGen.port: 5174
       traefikConfigGen.address: traefikdev.jmcdowall.com
 

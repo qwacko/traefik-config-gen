@@ -1,52 +1,48 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import { auth } from '$lib/server/auth/auth'
-import type { PageServerLoad, Actions } from './$types'
-import { z } from 'zod'
-import { validatedActionHandler } from '$lib/server/utils/validatedActionHandler'
+import { superValidate, setError } from 'sveltekit-superforms/server'
+import { signupSchema } from './signupSchema'
 
 // If the user exists, redirect authenticated users to the profile page.
-export const load: PageServerLoad = async ({ locals }) => {
-  const session = await locals.validate()
-  if (session) throw redirect(302, '/')
-  return {}
+export const load = async (event) => {
+  const form = await superValidate(event, signupSchema)
+
+  return { form }
 }
 
-const signupValidation = z
-  .object({ username: z.string().min(1), password: z.string().min(4) })
-  .strip()
+export const actions = {
+  default: async (event) => {
+    const form = await superValidate(event, signupSchema)
+    if (!form.valid) {
+      // Again, always return { form } and things will just work.
+      return fail(400, { form })
+    }
 
-export const actions: Actions = {
-  default: validatedActionHandler({
-    validator: signupValidation,
-    processingFunction: async ({ input, requestData }) => {
-      try {
-        const user = await auth.createUser('username', input.username, {
-          password: input.password,
-          attributes: {
-            username: input.username,
-          },
-        })
-        const session = await auth.createSession(user.userId)
-        requestData.locals.setSession(session)
-      } catch {
-        // username already in use
-        return fail(400, {
-          errors: { fieldErrors: { username: 'Username Already In Use' } },
-        })
-      }
-      return { success: true }
-    },
-  }),
+    const { username, password } = form.data
 
-  // async ({ request, locals }) => {
-  // 	const form = await request.formData();
-  // 	const username = form.get("username");
-  // 	const password = form.get("password");
+    if (form.data.password !== form.data.confirmPassword) {
+      return setError(form, 'confirmPassword', "Passwords don't match")
+    }
 
-  // 	// check for empty values
-  // 	if (!username || !password || typeof username !== "string" || typeof password !== "string") {
-  // 		return fail(400);
-  // 	}
-
-  // }
+    try {
+      console.log('Starting Create User', { username, password })
+      const user = await auth.createUser({
+        primaryKey: {
+          providerId: 'username',
+          providerUserId: username,
+          password,
+        },
+        attributes: {
+          username,
+        },
+      })
+      console.log('Created User', user)
+      const session = await auth.createSession(user.userId)
+      event.locals.setSession(session)
+      return { form }
+    } catch {
+      // username already in use
+      return setError(form, 'username', 'Username already in use')
+    }
+  },
 }

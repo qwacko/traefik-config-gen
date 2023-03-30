@@ -1,19 +1,10 @@
 import { createContext } from '$lib/trpc/context'
 import { router } from '$lib/trpc/router'
 import { redirect } from '@sveltejs/kit'
-import type { PageServerLoad } from './$types'
 import { validatedActionHandler } from '$lib/server/utils/validatedActionHandler'
-import {
-  sourceAddValidation,
-  sourceUpdateValidation,
-} from '$lib/trpc/validation/sourcesValidation'
-import { fail } from '@sveltejs/kit'
-import type { Actions } from './$types'
+import { sourceUpdateValidation } from '$lib/trpc/validation/sourcesValidation'
 
-export const load = (async (event) => {
-  const session = await event.locals.validate()
-  if (!session) throw redirect(302, '/login')
-
+export const load = async (event) => {
   const sourceId = event.params.id
 
   try {
@@ -29,7 +20,7 @@ export const load = (async (event) => {
       },
     }
   }
-}) satisfies PageServerLoad
+}
 
 export const actions = {
   update: validatedActionHandler({
@@ -38,4 +29,4 @@ export const actions = {
     processingFunction: async ({ input, trpc }) =>
       trpc.source.updateSource(input),
   }),
-} satisfies Actions
+}

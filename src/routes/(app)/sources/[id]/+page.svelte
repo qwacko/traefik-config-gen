@@ -1,14 +1,14 @@
 <script lang="ts">
 import { page } from '$app/stores'
-import type { PageData } from './$types'
 import { Alert } from 'flowbite-svelte'
-import { Card, Badge, Accordion, AccordionItem } from 'flowbite-svelte'
+import { Badge, Accordion, AccordionItem } from 'flowbite-svelte'
 import dayjs from 'dayjs'
 import EditModal from './EditModal.svelte'
 import DisplayRawData from './DisplayRawData.svelte'
 import DisplayParameters from './DisplayParameters.svelte'
+import DeleteSource from './DeleteSource.svelte'
 
-export let data: PageData
+export let data
 $: id = $page.params.id
 
 $: sourceData =
@@ -31,6 +31,9 @@ $: dateDiff = sourceData?.lastUpdated
         <div class="flex"><b>{sourceData.title}</b></div>
         <div class="flex">
           <EditModal sourceData={sourceData} />
+        </div>
+        <div class="flex">
+          <DeleteSource data={sourceData} />
         </div>
       </div>
       <div class="flex flex-row gap-2">

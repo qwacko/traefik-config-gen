@@ -1,13 +1,12 @@
 import Docker from 'dockerode'
 import { error } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
 
 const printContainerInfo = async () => {
   const docker = new Docker()
   const dockerInfo = await docker.listContainers()
 }
 
-export const GET = (async ({ url }) => {
+export const GET = async ({ url }) => {
   await printContainerInfo()
 
   const min = Number(url.searchParams.get('min') ?? '0')
@@ -25,4 +24,4 @@ export const GET = (async ({ url }) => {
   const random = min + Math.random() * d
 
   return new Response(String(random))
-}) satisfies RequestHandler
+}

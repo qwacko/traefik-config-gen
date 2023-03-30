@@ -11,31 +11,46 @@ datasource db {
 }
 
 model User {
-  id              String    @id @unique @default(cuid())
-  provider_id     String    @unique
-  hashed_password String?
-  session         Session[]
-
-  username String @unique
+  id       String    @id @unique
+  session  Session[]
+  Key      Key[]
+  username String    @unique
 
   @@map("user")
 }
 
 model Session {
-  id           String @id @unique
-  user_id      String
-  expires      BigInt
-  idle_expires BigInt
-  user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt @default(0)
+  idle_expires   BigInt @default(0)
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("session")
 }
 
+model Key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  primary         Boolean
+  expires         BigInt?
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("key")
+}
+
 model RouterTemplate {
-  id       String @id @unique @default(cuid())
-  title    String @unique
-  template String
+  id          String  @id @unique @default(cuid())
+  title       String  @unique
+  template    String
+  exampleData String?
+  editable    Boolean @default(true)
+
+  masterSource   Source? @relation(name: "sourceRouterTemplates", fields: [masterSourceId], references: [id])
+  masterSourceId String?
 
   Source Source[]
   Host   Host[]
@@ -45,9 +60,14 @@ model RouterTemplate {
 }
 
 model ServiceTemplate {
-  id       String @id @unique @default(cuid())
-  title    String @unique
-  template String
+  id          String  @id @unique @default(cuid())
+  title       String  @unique
+  template    String
+  exampleData String?
+  editable    Boolean @default(true)
+
+  masterSource   Source? @relation(name: "sourceServiceTemplates", fields: [masterSourceId], references: [id])
+  masterSourceId String?
 
   Source Source[]
   Host   Host[]
@@ -70,6 +90,9 @@ model Source {
   routerTemplateId  String?
   defaultService    ServiceTemplate? @relation(fields: [serviceTemplateId], references: [id])
   serviceTemplateId String?
+
+  ownedServiceTemplates ServiceTemplate[] @relation(name: "sourceServiceTemplates")
+  ownedRouterTemplates  RouterTemplate[]  @relation(name: "sourceRouterTemplates")
 
   Host Host[]
 

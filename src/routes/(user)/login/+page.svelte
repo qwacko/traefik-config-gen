@@ -1,46 +1,48 @@
 <script lang="ts">
-import type { ActionData } from './$types'
-import { Card, Button, Label, Input, Checkbox, Alert, P } from 'flowbite-svelte'
-import { enhance } from '$app/forms'
+	import { enhance } from '$app/forms';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { loginSchemaType } from './loginSchema';
 
-export let form: ActionData
-
-$: fieldErrors =
-  form?.errors && 'fieldErrors' in form.errors
-    ? form.errors.fieldErrors
-    : undefined
+	export let data;
+	const { form, errors, constraints } = superForm<loginSchemaType>(data.form);
 </script>
 
-<Card class="flex mt-24 w-80">
-  <form class="flex flex-col space-y-6" method="POST" use:enhance>
-    <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0">
-      Sign in
-    </h3>
-    <Label class="space-y-2">
-      <span>Username</span>
-      <Input type="text" name="username" placeholder="Username" required />
-      {#if fieldErrors?.username}
-        <P size="xs" class="text-red-600">{fieldErrors.username}</P>
-      {/if}
-    </Label>
-    <Label class="space-y-2">
-      <span>Password</span>
-      <Input type="password" name="password" placeholder="•••••" required />
-      {#if fieldErrors?.password}
-        <P size="xs" class="text-red-600">{fieldErrors.password}</P>
-      {/if}
-    </Label>
-    {#if form?.errors?.formErrors && Array.isArray(form?.errors?.formErrors)}
-      {#each form.errors.formErrors as currentError}
-        <P size="xs" class="text-red-600">{currentError}</P>
-      {/each}
-    {/if}
-    <Button type="submit" class="w-full">Login</Button>
-    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-      Not registered? <a
-        href="/"
-        class="text-blue-700 hover:underline dark:text-blue-500"
-        >Create account</a>
-    </div>
-  </form>
-</Card>
+<div class="flex justify-center items-center h-screen">
+	<div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+		<h1 class="text-2xl font-semibold mb-6">Sign in</h1>
+		<form method="POST" use:enhance>
+			<div class="mb-4">
+				<label for="username" class="block text-gray-700 font-semibold mb-2">Username</label>
+				<input
+					id="username"
+					name="username"
+					type="text"
+					data-invalid={$errors.username}
+					bind:value={$form.username}
+					{...$constraints.username}
+					class="border border-gray-300 p-2 w-full rounded-lg"
+				/>
+				{#if $errors.username}<span class="text-red-500 text-sm">{$errors.username}</span>{/if}
+			</div>
+			<div class="mb-4">
+				<label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+				<input
+					type="password"
+					id="password"
+					name="password"
+					data-invalid={$errors.password}
+					bind:value={$form.password}
+					{...$constraints.password}
+					class="border border-gray-300 p-2 w-full rounded-lg"
+				/>
+				{#if $errors.password}<span class="text-red-500 text-sm">{$errors.password}</span>{/if}
+			</div>
+			<div class="mt-6 flex justify-between items-center">
+				<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+					>Sign In</button
+				>
+				<a href="/signup" class="text-blue-500 hover:text-blue-600 font-semibold">Create account</a>
+			</div>
+		</form>
+	</div>
+</div>
