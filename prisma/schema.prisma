@@ -10,115 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String    @id @unique
-  session  Session[]
-  Key      Key[]
-  username String    @unique
+model AuthUser {
+  id       String        @id @unique
+  session  AuthSession[]
+  Key      AuthKey[]
+  username String?       @unique
+  // here you can add custom fields for your user
+  // e.g. name, email, username, roles, etc.
 
-  @@map("user")
+  @@map("auth_user")
 }
 
-model Session {
-  id             String @id @unique
+model AuthSession {
+  id             String   @id @unique
   user_id        String
-  active_expires BigInt @default(0)
-  idle_expires   BigInt @default(0)
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  active_expires BigInt
+  idle_expires   BigInt
+  user           AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("session")
+  @@map("auth_session")
 }
 
-model Key {
-  id              String  @id @unique
+model AuthKey {
+  id              String   @id @unique
   hashed_password String?
   user_id         String
-  primary         Boolean
+  primary_key     Boolean
   expires         BigInt?
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user            AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("key")
-}
-
-model RouterTemplate {
-  id          String  @id @unique @default(cuid())
-  title       String  @unique
-  template    String
-  exampleData String?
-  editable    Boolean @default(true)
-
-  masterSource   Source? @relation(name: "sourceRouterTemplates", fields: [masterSourceId], references: [id])
-  masterSourceId String?
-
-  Source Source[]
-  Host   Host[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ServiceTemplate {
-  id          String  @id @unique @default(cuid())
-  title       String  @unique
-  template    String
-  exampleData String?
-  editable    Boolean @default(true)
-
-  masterSource   Source? @relation(name: "sourceServiceTemplates", fields: [masterSourceId], references: [id])
-  masterSourceId String?
-
-  Source Source[]
-  Host   Host[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Source {
-  id          String    @id @unique @default(cuid())
-  title       String
-  type        String
-  address     String
-  autoDelete  Boolean   @default(false)
-  enabled     Boolean   @default(true)
-  parameters  String?
-  lastRefresh DateTime?
-
-  defaultRouter     RouterTemplate?  @relation(fields: [routerTemplateId], references: [id])
-  routerTemplateId  String?
-  defaultService    ServiceTemplate? @relation(fields: [serviceTemplateId], references: [id])
-  serviceTemplateId String?
-
-  ownedServiceTemplates ServiceTemplate[] @relation(name: "sourceServiceTemplates")
-  ownedRouterTemplates  RouterTemplate[]  @relation(name: "sourceRouterTemplates")
-
-  Host Host[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Host {
-  id         String   @id @unique @default(cuid())
-  title      String
-  identifier String
-  parameters String?
-  lastSeen   DateTime
-  errors     String?
-
-  source   Source @relation(fields: [sourceId], references: [id])
-  sourceId String
-
-  customRouter     String?
-  router           RouterTemplate? @relation(fields: [routerTemplateId], references: [id])
-  routerTemplateId String?
-
-  customService     String?
-  service           ServiceTemplate? @relation(fields: [serviceTemplateId], references: [id])
-  serviceTemplateId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("auth_key")
 }

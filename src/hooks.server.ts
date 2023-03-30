@@ -1,19 +1,25 @@
-import { auth } from './lib/server/auth/auth'
-import { handleHooks } from '@lucia-auth/sveltekit'
-import { sequence } from '@sveltejs/kit/hooks'
-import type { Handle } from '@sveltejs/kit'
+import { auth } from '$lib/server/lucia';
+import { createContext } from '$lib/server/trpc/context';
+import { router } from '$lib/server/trpc/router';
+import type { Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
+import { createTRPCHandle } from 'trpc-sveltekit';
 
-const sessionProcessing: Handle = async ({ event, resolve }) => {
-  console.log('SessionProcessing ---------------')
-  const session = await event.locals.validateUser()
-  const session2 = await event.locals.validate()
-  const cookies = event.cookies.getAll()
-  console.log('data', {
-    session,
-    session2,
-    cookies,
-  })
-  console.log('SessionProcessing Complete -----------')
-  return resolve(event)
-}
-export const handle = sequence(handleHooks(auth), sessionProcessing)
+const authHandler: Handle = async ({ event, resolve }) => {
+	event.locals.auth = auth.handleRequest(event);
+	const user = await event.locals.auth.validate();
+
+	if (event.route.id?.startsWith('/(loggedIn)') && !user) {
+		console.log('User Not Logged In - Redirecting to Login');
+		return Response.redirect(`${event.url.origin}/login`, 302);
+	}
+
+	if (event.route.id?.startsWith('/(loggedOut)') && user) {
+		console.log('User Logged In - Redirecting to User');
+		return Response.redirect(`${event.url.origin}/user`, 302);
+	}
+
+	return await resolve(event);
+};
+
+export const handle = sequence(authHandler, createTRPCHandle({ router, createContext }));
