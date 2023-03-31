@@ -1,6 +1,5 @@
 <script>
-	export let data;
+	import EditButton from '$lib/components/EditButton.svelte';
 </script>
 
 <div>Hello</div>
-{JSON.stringify(data)}

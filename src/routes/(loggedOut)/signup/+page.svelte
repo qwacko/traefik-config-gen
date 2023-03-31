@@ -3,17 +3,17 @@
 	import Button from '$lib/components/Button.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import ErrorText from '$lib/components/ErrorText.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SpreadButtons from '$lib/components/SpreadButtons.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
-	import type { signupSchemaType } from './signupSchema';
+	import type { signupSchemaType } from '$lib/schema/signupSchema';
+	import LinkButton from '$lib/components/LinkButton.svelte';
 
 	export let data;
 	const { form, errors, constraints, message } = superForm<signupSchemaType>(data.form);
 </script>
 
-<CenterCard title="Create First Account" maxWidthRem={30}>
+<CenterCard title="Signup" maxWidthRem={30}>
 	<form method="POST" use:enhance>
 		<TextInput
 			title="Username"
@@ -48,7 +48,9 @@
 		<ErrorText message={$message} />
 		<SpreadButtons>
 			<Button type="submit" style="primary">Sign Up</Button>
-			<LinkButton style="secondary" href="/login">Login</LinkButton>
+			{#if !Boolean(data.firstUser.userCountZero)}
+				<LinkButton href="/login" style="secondary">Login</LinkButton>
+			{/if}
 		</SpreadButtons>
 	</form>
 </CenterCard>

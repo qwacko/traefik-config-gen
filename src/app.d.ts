@@ -1,3 +1,6 @@
+/// <reference types="@sveltejs/kit" />
+/// <reference types="unplugin-icons/types/svelte" />
+
 /// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import('$lib/server/lucia').Auth;
@@ -14,6 +17,7 @@ declare global {
 		// interface Platform {}
 		interface Locals {
 			auth: import('lucia-auth').AuthRequest;
+			trpc: import('$lib/server/trpc/router').CalledRouter;
 		}
 	}
 }
