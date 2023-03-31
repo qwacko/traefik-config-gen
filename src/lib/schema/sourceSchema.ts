@@ -19,14 +19,16 @@ export const sourceAddValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(true),
-	parameters: z
-		.object({})
-		.catchall(z.string())
-		.transform((data) => JSON.stringify(data))
-		.optional(),
+	parameters: z.string().optional(),
+	// .object({})
+	// .catchall(z.string())
+	// .transform((data) => JSON.stringify(data))
+	// .optional(),
 	defaultRouterTemplateId: z.string().cuid().optional(),
 	defaultServiceTemplateId: z.string().cuid().optional()
 });
+
+export type sourceAddValidationType = typeof sourceAddValidation;
 
 export const sourceUpdateValidation = z.object({
 	id: z.string().cuid(),
