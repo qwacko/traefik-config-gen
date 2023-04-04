@@ -1,6 +1,7 @@
 import { superValidate } from 'sveltekit-superforms/server';
 import { sourceAddValidation } from '$lib/schema/sourceSchema';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Source } from '@prisma/client';
 
 export const load = async (event) => {
 	const form = await superValidate(event, sourceAddValidation);
@@ -16,12 +17,13 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		try {
-			await event.locals.trpc.sources.addSource(form.data);
+		let newSource: Source | undefined;
 
-			return { form };
+		try {
+			newSource = await event.locals.trpc.sources.addSource(form.data);
 		} catch {
 			return fail(400, { form: { ...form, message: 'Error Creating Source' } });
 		}
+		throw redirect(302, `/sources/edit/${newSource.id}`);
 	}
 };

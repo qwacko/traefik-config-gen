@@ -1,19 +1,17 @@
 <script lang="ts">
-	import Select from '$lib/components/Select.svelte';
-
 	import CenterCard from '$lib/components/CenterCard.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
-	import { sourceTypeDropdown, type sourceAddValidationType } from '$lib/schema/sourceSchema';
-	import { superForm } from 'sveltekit-superforms/client';
-	import type { PageData } from './$types';
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import Row from '$lib/components/Row.svelte';
+	import Select from '$lib/components/Select.svelte';
 	import Space from '$lib/components/Space.svelte';
 	import Stack from '$lib/components/Stack.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import { sourceTypeDropdown, type sourceUpdateValidationType } from '$lib/schema/sourceSchema';
+	import { superForm } from 'sveltekit-superforms/client';
 
-	export let data: PageData;
+	export let data;
 
-	const { form, errors, constraints, enhance, message } = superForm<sourceAddValidationType>(
+	const { form, errors, constraints, message, enhance } = superForm<sourceUpdateValidationType>(
 		data.form,
 		{
 			taintedMessage: null
@@ -22,8 +20,9 @@
 </script>
 
 <form method="post" use:enhance>
-	<CenterCard title="Create Source" size="xl">
+	<CenterCard title="Edit Source">
 		<Stack>
+			<input type="hidden" name="id" bind:value={$form.id} />
 			<TextInput
 				title="Title"
 				name="title"
@@ -45,16 +44,19 @@
 				title="Source Type"
 				errorMessage={$errors.type}
 				options={sourceTypeDropdown}
-				bind:value={$form.type}
+				value={$form.type}
 				{...$constraints.type}
 			/>
 			<ErrorText message={$message} />
 		</Stack>
 		<svelte:fragment slot="footer">
 			<Row>
-				<button type="submit" class="btn variant-filled-primary">Create Source</button>
+				<input type="submit" value="Update Source" class="btn variant-filled-primary" />
+				<a role="button" href="/sources/delete/{$form.id}" class="btn variant-filled-error"
+					>Delete Source</a
+				>
 				<Space />
-				<a href="/sources" class="btn variant-ghost-primary">Cancel</a>
+				<a role="button" href="/sources" class="btn variant-ghost-primary">Cancel</a>
 			</Row>
 		</svelte:fragment>
 	</CenterCard>

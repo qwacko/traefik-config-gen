@@ -4,12 +4,22 @@ import z from 'zod';
 import {
 	sourceAddValidation,
 	sourceGetOutputValidation,
+	sourceGetOutputValidationSingle,
 	sourceUpdateValidation
 } from '$lib/schema/sourceSchema';
 // import { getDockerInformation } from '$lib/server/docker/getDockerInformation';
 // import { TRPCError } from '@trpc/server';
 
 export const sourceRouter = t.router({
+	getSource: t.procedure
+		.use(authMiddleware)
+		.input(z.string().cuid())
+		.output(sourceGetOutputValidationSingle.nullable())
+		.query(async ({ ctx, input }) => {
+			const data = await ctx.prisma.source.findUnique({ where: { id: input } });
+
+			return data;
+		}),
 	getSources: t.procedure
 		.use(authMiddleware)
 		.output(sourceGetOutputValidation)
@@ -21,6 +31,13 @@ export const sourceRouter = t.router({
 		.use(authMiddleware)
 		.input(sourceAddValidation)
 		.mutation(async ({ input: data, ctx }) => ctx.prisma.source.create({ data })),
+	deleteSource: t.procedure
+		.use(authMiddleware)
+		.input(z.string().cuid())
+		.mutation(async ({ ctx, input }) => {
+			await ctx.prisma.source.delete({ where: { id: input } });
+			return true;
+		}),
 	updateSource: t.procedure
 		.use(authMiddleware)
 		.input(sourceUpdateValidation)

@@ -1,20 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Button from '$lib/components/Button.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import ErrorText from '$lib/components/ErrorText.svelte';
-	import SpreadButtons from '$lib/components/SpreadButtons.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { signupSchemaType } from '$lib/schema/signupSchema';
-	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Row from '$lib/components/Row.svelte';
+	import Space from '$lib/components/Space.svelte';
 
 	export let data;
 	const { form, errors, constraints, message } = superForm<signupSchemaType>(data.form);
 </script>
 
-<CenterCard title="Create User Account" maxWidthRem={30}>
-	<form method="POST" use:enhance>
+<form method="POST" use:enhance>
+	<CenterCard title="Create User Account" size="xl">
 		<TextInput
 			title="Username"
 			errorMessage={$errors.username}
@@ -46,9 +45,12 @@
 			{...$constraints.confirmPassword}
 		/>
 		<ErrorText message={$message} />
-		<SpreadButtons>
-			<Button type="submit" style="primary">Add User</Button>
-			<LinkButton href="/users" style="secondary">Finished</LinkButton>
-		</SpreadButtons>
-	</form>
-</CenterCard>
+		<svelte:fragment slot="footer">
+			<Row>
+				<button type="submit" class="btn variant-filled-primary">Add User</button>
+				<Space />
+				<a role="button" href="/users" class="btn variant-ghost-primary">Cancel</a>
+			</Row>
+		</svelte:fragment>
+	</CenterCard>
+</form>

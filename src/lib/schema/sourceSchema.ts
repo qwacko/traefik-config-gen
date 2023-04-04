@@ -1,11 +1,21 @@
 import { z } from 'zod';
 
 const sourceTypeOptions = ['docker', 'manual', 'yaml', 'other'] as const;
+type sourceTypeOptionsType = 'docker' | 'manual' | 'yaml' | 'other';
+
+export type sourceTypeDropdownType = { key: sourceTypeOptionsType; label: string }[];
+export const sourceTypeDropdown: sourceTypeDropdownType = [
+	{ key: 'docker', label: 'Docker' },
+	{ key: 'manual', label: 'Manual' },
+	{ key: 'yaml', label: 'YAML' },
+	{ key: 'other', label: 'Other' }
+];
+
 const sourceTypeOptionsEditable = [...sourceTypeOptions];
 
 export const sourceAddValidation = z.object({
 	title: z.string(),
-	type: z.enum(sourceTypeOptions),
+	type: z.enum(sourceTypeOptions).default('manual'),
 	address: z.string(),
 	autoDelete: z
 		.string()
@@ -47,9 +57,11 @@ export const sourceUpdateValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(true),
-	defaultRouterTemplateId: z.string().cuid().optional(),
-	defaultServiceTemplateId: z.string().cuid().optional()
+	defaultRouterTemplateId: z.string().cuid().optional().nullable(),
+	defaultServiceTemplateId: z.string().cuid().optional().nullable()
 });
+
+export type sourceUpdateValidationType = typeof sourceUpdateValidation;
 
 export const sourceGetOutputValidationSingle = z.object({
 	id: z.string().cuid(),

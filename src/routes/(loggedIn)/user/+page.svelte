@@ -2,13 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { trpc } from '$lib/clientTRPC';
-	import { page } from '$app/stores';
 	import CenterCard from '$lib/components/CenterCard.svelte';
-	import DataWrapper from '$lib/components/DataWrapper.svelte';
-	import SpreadButtons from '$lib/components/SpreadButtons.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Title from '$lib/components/Title.svelte';
+	import Stack from '$lib/components/Stack.svelte';
+	import Row from '$lib/components/Row.svelte';
+	import Space from '$lib/components/Space.svelte';
 
 	export let data: PageData;
 
@@ -17,21 +14,24 @@
 	};
 </script>
 
-<CenterCard title="User" maxWidthRem={50}
-	><DataWrapper>
-		<Title level={1}>User id:</Title>
+<CenterCard title="User" size="xl">
+	<Stack>
+		<h2>User id:</h2>
 		<p>{data.user.user.userId}</p>
-		<Title level={1}>Username:</Title>
+		<h3>Username:</h3>
 		<p>{data.user.user.username}</p>
-	</DataWrapper>
+	</Stack>
 
-	<DataWrapper>
-		<Title level={1}>TRPC Data Sources</Title>
-	</DataWrapper>
-	<SpreadButtons>
+	<Stack>
+		<h2>TRPC Data Sources</h2>
+	</Stack>
+	<Row>
 		<form use:enhance method="post" action="?/logout">
-			<Button type="submit" style="primary">Sign out</Button>
+			<button type="submit" class="btn variant-filled-primary">Sign out</button>
 		</form>
-		<Button type="button" style="secondary" on:click={invalidate}>Refresh Data</Button>
-	</SpreadButtons>
+		<Space />
+		<button type="button" on:click={invalidate} class="btn variant-ghost-secondary"
+			>Refresh Data</button
+		>
+	</Row>
 </CenterCard>
