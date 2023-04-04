@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
+	import { AppShell, storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	export let data;
@@ -18,55 +18,26 @@
 	$: login = $page.route.id?.startsWith('/(loggedOut)');
 </script>
 
-<div class="col">
-	<div class="nav">
-		<a href="/" class:bold={homePage}>Home</a>
-		{#if data.user.user}
-			<a href="/user" class:bold={user}>User</a>
-			<a href="/users" class:bold={users}>Users</a>
-			<form action="/?/logout" method="post">
-				<button type="submit" class:bold={login}>Logout</button>
-			</form>
-		{:else}
-			<a href="/login" class:bold={login}>Login</a>
-		{/if}
-	</div>
-
+<AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
+	<svelte:fragment slot="sidebarLeft">
+		<!-- Insert the list: -->
+		<nav class="list-nav">
+			<ul>
+				<li><a href="/" class:variant-soft-primary={homePage}>Home</a></li>
+				{#if data.user.user}
+					<li><a href="/user" class:variant-soft-primary={user}>User</a></li>
+					<li><a href="/users" class:variant-soft-primary={users}>Users</a></li>
+					<li>
+						<form action="/?/logout" method="post">
+							<button type="submit" class="btn variant-filled-primary">Logout</button>
+						</form>
+					</li>
+				{:else}
+					<li><a href="/login" class="btn variant-filled-primary">Login</a></li>
+				{/if}
+			</ul>
+		</nav>
+		<!-- --- -->
+	</svelte:fragment>
 	<slot />
-</div>
-
-<style>
-	.bold {
-		font-weight: bold;
-	}
-
-	.nav {
-		background-color: rgb(212, 230, 250);
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		height: 3.5rem;
-		padding: 0 1rem;
-	}
-
-	.nav a,
-	button {
-		color: blue;
-		font-size: 1rem;
-		text-decoration: none;
-		padding: 0.75rem;
-		border-radius: 0.375rem;
-
-		transition: background-color 0.3s ease-in-out;
-	}
-
-	.nav a:hover,
-	button:hover {
-		background-color: #9dc0fd;
-	}
-
-	.col {
-		display: flex;
-		flex-direction: column;
-	}
-</style>
+</AppShell>
