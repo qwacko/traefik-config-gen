@@ -4,6 +4,7 @@
 
 	// This contains the bulk of Skeletons required styles:
 	import '@skeletonlabs/skeleton/styles/all.css';
+	import '../app.postcss';
 	import { page } from '$app/stores';
 
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
