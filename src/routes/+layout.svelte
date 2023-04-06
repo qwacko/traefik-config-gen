@@ -17,7 +17,7 @@
 	$: users = $page.route.id?.startsWith('/(loggedIn)/users');
 	$: user = $page.route.id?.startsWith('/(loggedIn)/user') && !users;
 	$: sources = $page.route.id?.startsWith('/(loggedIn)/sources');
-	$: login = $page.route.id?.startsWith('/(loggedOut)');
+	$: templates = $page.route.id?.startsWith('/(loggedIn)/templates');
 </script>
 
 <AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
@@ -30,6 +30,7 @@
 					<li><a href="/user" class:variant-soft-primary={user}>User</a></li>
 					<li><a href="/users" class:variant-soft-primary={users}>Users</a></li>
 					<li><a href="/sources" class:variant-soft-primary={sources}>Sources</a></li>
+					<li><a href="/templates" class:variant-soft-primary={templates}>Templates</a></li>
 					<li class="pt-4">
 						<form action="/?/logout" method="post">
 							<button type="submit" class="btn variant-filled-primary w-full">Logout</button>

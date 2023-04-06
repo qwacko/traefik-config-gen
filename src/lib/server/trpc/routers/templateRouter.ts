@@ -1,9 +1,9 @@
+import { createTemplateSchema } from '$lib/schema/templateSchema';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { authMiddleware } from '../middleware/auth';
 import { t } from '../t';
 
-type TemplateTypes = 'router' | 'service';
 const templateTypeOptions = ['router', 'service'] as const;
 
 const templateReturn = z.object({
@@ -21,25 +21,36 @@ const templateReturn = z.object({
 export type TemplateReturnType = z.infer<typeof templateReturn>;
 
 export const templateRouter = t.router({
-	get: t.procedure
+	getAll: t.procedure
 		.use(authMiddleware)
-		.output(z.array(templateReturn.strict()))
+		.output(
+			z.object({
+				routerTemplates: z.array(templateReturn.strict()),
+				serviceTemplates: z.array(templateReturn.strict())
+			})
+		)
 		.query(async ({ ctx }) => {
-			const routerTemplates = await ctx.db.routerTemplate.findMany();
-			const serviceTemplates = await ctx.db.serviceTemplate.findMany();
+			const routerTemplates = (
+				await ctx.prisma.routerTemplate.findMany({ orderBy: { title: 'asc' } })
+			).map((item) => ({
+				...item,
+				type: 'router' as const
+			}));
+			const serviceTemplates = (
+				await ctx.prisma.serviceTemplate.findMany({ orderBy: { title: 'asc' } })
+			).map((item) => ({
+				...item,
+				type: 'service' as const
+			}));
 
-			const returnData = [
-				...routerTemplates.map((item) => ({
-					...item,
-					type: 'router' as TemplateTypes
-				})),
-				...serviceTemplates.map((item) => ({
-					...item,
-					type: 'service' as TemplateTypes
-				}))
-			].sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase()));
-
-			return returnData;
+			return { routerTemplates, serviceTemplates };
+		}),
+	createRouter: t.procedure
+		.use(authMiddleware)
+		.input(createTemplateSchema)
+		.mutation(async ({ ctx, input }) => {
+			const newItem = await ctx.prisma.routerTemplate.create({ data: input });
+			return newItem;
 		}),
 	create: t.procedure
 		.use(authMiddleware)
@@ -55,10 +66,10 @@ export const templateRouter = t.router({
 		.mutation(async ({ ctx, input }) => {
 			const { type, ...data } = input;
 			if (type === 'router') {
-				const newItem = await ctx.db.routerTemplate.create({ data });
+				const newItem = await ctx.prisma.routerTemplate.create({ data });
 				return { ...newItem, type: 'router' };
 			} else {
-				const newItem = await ctx.db.serviceTemplate.create({ data });
+				const newItem = await ctx.prisma.serviceTemplate.create({ data });
 				return { ...newItem, type: 'service' };
 			}
 		}),
@@ -75,19 +86,19 @@ export const templateRouter = t.router({
 		.mutation(async ({ ctx, input }) => {
 			const { id, ...data } = input;
 
-			const targetRouter = await ctx.db.routerTemplate.findUnique({
+			const targetRouter = await ctx.prisma.routerTemplate.findUnique({
 				where: { id }
 			});
-			const targetService = await ctx.db.serviceTemplate.findUnique({
+			const targetService = await ctx.prisma.serviceTemplate.findUnique({
 				where: { id }
 			});
 
 			if (!targetRouter && !targetService) {
 				throw new TRPCError({ message: 'Cannot find id', code: 'BAD_REQUEST' });
 			} else if (targetRouter) {
-				await ctx.db.routerTemplate.update({ where: { id }, data: { ...data } });
+				await ctx.prisma.routerTemplate.update({ where: { id }, data: { ...data } });
 			} else {
-				await ctx.db.serviceTemplate.update({ where: { id }, data });
+				await ctx.prisma.serviceTemplate.update({ where: { id }, data });
 			}
 			return true;
 		}),
@@ -95,7 +106,7 @@ export const templateRouter = t.router({
 		.use(authMiddleware)
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.db.routerTemplate.delete({ where: { id: input.id } });
-			await ctx.db.serviceTemplate.delete({ where: { id: input.id } });
+			await ctx.prisma.routerTemplate.delete({ where: { id: input.id } });
+			await ctx.prisma.serviceTemplate.delete({ where: { id: input.id } });
 		})
 });
