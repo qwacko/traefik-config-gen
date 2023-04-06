@@ -6,3 +6,12 @@ export const createTemplateSchema = z.object({
 });
 
 export type createTemplateSchemaType = typeof createTemplateSchema;
+
+export const updateTempateSchema = z.object({
+	id: z.string().cuid(),
+	title: z.string().optional(),
+	template: z.string().optional(),
+	exampleData: z.string().optional().nullable()
+});
+
+export type updateTemplateSchemaType = typeof updateTempateSchema;

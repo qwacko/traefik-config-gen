@@ -21,17 +21,17 @@
 					<Row>
 						{template.title}
 						<Space />
-						<Popover message="View {template.title}" id="view">
+						<Popover message="View {template.title}" id="viewRouter">
 							<a href={`/templates/${template.id}`} class="btn-icon variant-ghost-secondary">
 								<InfoIcon />
 							</a>
 						</Popover>
-						<Popover message="Edit {template.title}" id="edit">
+						<Popover message="Edit {template.title}" id="editRouter">
 							<a href={`/templates/edit/${template.id}`} class="btn-icon variant-ghost-primary">
 								<EditIcon />
 							</a>
 						</Popover>
-						<Popover message="Delete {template.title}" id="delete">
+						<Popover message="Delete {template.title}" id="deleteRouter">
 							<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
 								<DeleteIcon />
 							</a>
@@ -51,17 +51,19 @@
 					<Row>
 						{template.title}
 						<Space />
-						<Popover message="View {template.title}" id="view">
+						<Popover message="View {template.title}" id="viewService">
 							<a href={`/templates/${template.id}`} class="btn-icon variant-ghost-secondary">
 								<InfoIcon />
 							</a>
 						</Popover>
-						<Popover message="Edit {template.title}" id="edit">
-							<a href={`/templates/edit/${template.id}`} class="btn-icon variant-ghost-primary">
-								<EditIcon />
-							</a>
-						</Popover>
-						<Popover message="Delete {template.title}" id="delete">
+						{#if template.editable}
+							<Popover message="Edit {template.title}" id="editService">
+								<a href={`/templates/edit/${template.id}`} class="btn-icon variant-ghost-primary">
+									<EditIcon />
+								</a>
+							</Popover>
+						{/if}
+						<Popover message="Delete {template.title}" id="deleteService">
 							<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
 								<DeleteIcon />
 							</a>

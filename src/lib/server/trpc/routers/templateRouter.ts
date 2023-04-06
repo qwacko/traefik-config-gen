@@ -1,4 +1,4 @@
-import { createTemplateSchema } from '$lib/schema/templateSchema';
+import { createTemplateSchema, updateTempateSchema } from '$lib/schema/templateSchema';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { authMiddleware } from '../middleware/auth';
@@ -45,6 +45,30 @@ export const templateRouter = t.router({
 
 			return { routerTemplates, serviceTemplates };
 		}),
+
+	get: t.procedure
+		.use(authMiddleware)
+		.input(z.object({ id: z.string().cuid() }))
+		.query(async ({ ctx, input }) => {
+			const routerTemplate = await ctx.prisma.routerTemplate.findUnique({
+				where: { id: input.id }
+			});
+
+			if (routerTemplate) {
+				return { ...routerTemplate, type: 'router' as const };
+			}
+
+			const serviceTemplate = await ctx.prisma.serviceTemplate.findUnique({
+				where: { id: input.id }
+			});
+
+			if (serviceTemplate) {
+				return { ...serviceTemplate, type: 'service' as const };
+			}
+
+			return null;
+		}),
+
 	createRouter: t.procedure
 		.use(authMiddleware)
 		.input(createTemplateSchema)
@@ -52,37 +76,17 @@ export const templateRouter = t.router({
 			const newItem = await ctx.prisma.routerTemplate.create({ data: input });
 			return newItem;
 		}),
-	create: t.procedure
+	createService: t.procedure
 		.use(authMiddleware)
-		.input(
-			z.object({
-				title: z.string(),
-				template: z.string(),
-				type: z.enum(templateTypeOptions),
-				exampleData: z.string().optional()
-			})
-		)
-		.output(templateReturn)
+		.input(createTemplateSchema)
 		.mutation(async ({ ctx, input }) => {
-			const { type, ...data } = input;
-			if (type === 'router') {
-				const newItem = await ctx.prisma.routerTemplate.create({ data });
-				return { ...newItem, type: 'router' };
-			} else {
-				const newItem = await ctx.prisma.serviceTemplate.create({ data });
-				return { ...newItem, type: 'service' };
-			}
+			const newItem = await ctx.prisma.serviceTemplate.create({ data: input });
+			return newItem;
 		}),
+
 	update: t.procedure
 		.use(authMiddleware)
-		.input(
-			z.object({
-				id: z.string().cuid(),
-				title: z.string().optional(),
-				template: z.string().optional(),
-				exampleData: z.string().optional()
-			})
-		)
+		.input(updateTempateSchema)
 		.mutation(async ({ ctx, input }) => {
 			const { id, ...data } = input;
 
@@ -96,7 +100,7 @@ export const templateRouter = t.router({
 			if (!targetRouter && !targetService) {
 				throw new TRPCError({ message: 'Cannot find id', code: 'BAD_REQUEST' });
 			} else if (targetRouter) {
-				await ctx.prisma.routerTemplate.update({ where: { id }, data: { ...data } });
+				await ctx.prisma.routerTemplate.update({ where: { id }, data });
 			} else {
 				await ctx.prisma.serviceTemplate.update({ where: { id }, data });
 			}
