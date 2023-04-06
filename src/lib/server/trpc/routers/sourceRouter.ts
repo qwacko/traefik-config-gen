@@ -2,13 +2,14 @@ import { t } from '../t';
 import { authMiddleware } from '../middleware/auth';
 import z from 'zod';
 import {
+	sourceAddParameterSchema,
 	sourceAddValidation,
 	sourceGetOutputValidation,
 	sourceGetOutputValidationSingle,
+	sourceRemoveParameterSchema,
+	sourceUpdateParameterSchema,
 	sourceUpdateValidation
 } from '$lib/schema/sourceSchema';
-// import { getDockerInformation } from '$lib/server/docker/getDockerInformation';
-// import { TRPCError } from '@trpc/server';
 
 export const sourceRouter = t.router({
 	getSource: t.procedure
@@ -73,43 +74,32 @@ export const sourceRouter = t.router({
 			// }
 		}),
 	parameters: t.router({
-		updateParameters: t.procedure
+		updateParameter: t.procedure
 			.use(authMiddleware)
-			.input(
-				z.object({
-					id: z.string().cuid(),
-					data: z.object({}).catchall(z.string())
-				})
-			)
+			.input(sourceUpdateParameterSchema)
 			.mutation(async ({ ctx, input }) => {
 				const current = await ctx.prisma.source.findFirstOrThrow({
-					where: { id: input.id }
+					where: { id: input.sourceId }
 				});
 
-				const currentParameters = current.parameters
-					? (JSON.parse(current.parameters) as Record<string, string>)
-					: undefined;
+				const newParameters = current.parameters ? JSON.parse(current.parameters) : undefined;
 
-				const newParameters = { ...currentParameters, ...input.data };
-
-				await ctx.prisma.source.update({
-					where: { id: input.id },
-					data: { parameters: JSON.stringify(newParameters) }
-				});
+				if (newParameters) {
+					newParameters[input.label] = input.value;
+					await ctx.prisma.source.update({
+						where: { id: input.sourceId },
+						data: { parameters: JSON.stringify(newParameters) }
+					});
+				}
 				return true;
 			}),
 
 		removeParameter: t.procedure
 			.use(authMiddleware)
-			.input(
-				z.object({
-					label: z.string(),
-					id: z.string().cuid()
-				})
-			)
+			.input(sourceRemoveParameterSchema)
 			.mutation(async ({ ctx, input }) => {
 				const current = await ctx.prisma.source.findFirstOrThrow({
-					where: { id: input.id }
+					where: { id: input.sourceId }
 				});
 
 				const newParameters = current.parameters ? JSON.parse(current.parameters) : undefined;
@@ -117,7 +107,7 @@ export const sourceRouter = t.router({
 				if (newParameters) {
 					delete newParameters[input.label];
 					await ctx.prisma.source.update({
-						where: { id: input.id },
+						where: { id: input.sourceId },
 						data: { parameters: JSON.stringify(newParameters) }
 					});
 				}
@@ -125,16 +115,10 @@ export const sourceRouter = t.router({
 			}),
 		addParameter: t.procedure
 			.use(authMiddleware)
-			.input(
-				z.object({
-					label: z.string(),
-					value: z.string(),
-					id: z.string().cuid()
-				})
-			)
+			.input(sourceAddParameterSchema)
 			.mutation(async ({ ctx, input }) => {
 				const current = await ctx.prisma.source.findFirstOrThrow({
-					where: { id: input.id }
+					where: { id: input.sourceId }
 				});
 
 				const newParameters = current.parameters
@@ -142,7 +126,7 @@ export const sourceRouter = t.router({
 					: { [input.label]: input.value };
 
 				await ctx.prisma.source.update({
-					where: { id: input.id },
+					where: { id: input.sourceId },
 					data: { parameters: JSON.stringify(newParameters) }
 				});
 				return true;

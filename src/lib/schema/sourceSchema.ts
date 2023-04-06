@@ -106,3 +106,22 @@ export const sourceGetOutputValidationSingle = z.object({
 export const sourceGetOutputValidation = z.array(sourceGetOutputValidationSingle);
 
 export type SourceOutput = z.infer<typeof sourceGetOutputValidationSingle>;
+
+export const sourceAddParameterSchema = z.object({
+	sourceId: z.string().cuid(),
+	label: z.string(),
+	value: z.string()
+});
+
+export type sourceAddParameterSchemaType = typeof sourceAddParameterSchema;
+
+export const sourceRemoveParameterSchema = z.object({
+	sourceId: z.string().cuid(),
+	label: z.string()
+});
+
+export type sourceRemoveParameterSchemaType = typeof sourceRemoveParameterSchema;
+
+export const sourceUpdateParameterSchema = sourceAddParameterSchema;
+
+export type sourceUpdateParameterSchemaType = typeof sourceUpdateParameterSchema;

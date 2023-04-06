@@ -16,6 +16,7 @@
 	$: homePage = $page.route.id?.startsWith('/(open)');
 	$: users = $page.route.id?.startsWith('/(loggedIn)/users');
 	$: user = $page.route.id?.startsWith('/(loggedIn)/user') && !users;
+	$: sources = $page.route.id?.startsWith('/(loggedIn)/sources');
 	$: login = $page.route.id?.startsWith('/(loggedOut)');
 </script>
 
@@ -28,13 +29,14 @@
 				{#if data.user.user}
 					<li><a href="/user" class:variant-soft-primary={user}>User</a></li>
 					<li><a href="/users" class:variant-soft-primary={users}>Users</a></li>
-					<li>
+					<li><a href="/sources" class:variant-soft-primary={sources}>Sources</a></li>
+					<li class="pt-4">
 						<form action="/?/logout" method="post">
-							<button type="submit" class="btn variant-filled-primary">Logout</button>
+							<button type="submit" class="btn variant-filled-primary w-full">Logout</button>
 						</form>
 					</li>
 				{:else}
-					<li><a href="/login" class="btn variant-filled-primary">Login</a></li>
+					<li class="pt-4"><a href="/login" class="btn variant-filled-primary">Login</a></li>
 				{/if}
 			</ul>
 		</nav>
