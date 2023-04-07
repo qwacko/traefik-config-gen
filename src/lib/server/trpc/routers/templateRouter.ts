@@ -49,6 +49,7 @@ export const templateRouter = t.router({
 	get: t.procedure
 		.use(authMiddleware)
 		.input(z.object({ id: z.string().cuid() }))
+		.output(templateReturn.strict().nullable())
 		.query(async ({ ctx, input }) => {
 			const routerTemplate = await ctx.prisma.routerTemplate.findUnique({
 				where: { id: input.id }
@@ -110,7 +111,7 @@ export const templateRouter = t.router({
 		.use(authMiddleware)
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.prisma.routerTemplate.delete({ where: { id: input.id } });
-			await ctx.prisma.serviceTemplate.delete({ where: { id: input.id } });
+			await ctx.prisma.routerTemplate.deleteMany({ where: { id: input.id } });
+			await ctx.prisma.serviceTemplate.deleteMany({ where: { id: input.id } });
 		})
 });
