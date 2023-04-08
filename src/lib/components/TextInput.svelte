@@ -1,11 +1,11 @@
 <script lang="ts">
 	import ErrorText from './ErrorText.svelte';
 
-	export let errorMessage: string | string[] | null | undefined;
+	export let errorMessage: string | string[] | null | undefined = undefined;
 	export let title: string | null;
 	export let name: string;
 	export let disabled: boolean = false;
-	export let value: string | undefined;
+	export let value: string | undefined = undefined;
 </script>
 
 <label class="label">

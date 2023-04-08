@@ -46,33 +46,6 @@ export const sourceRouter = t.router({
 			const { id, ...data } = input;
 			return ctx.prisma.source.update({ where: { id }, data });
 		}),
-	getSourceRawData: t.procedure
-		.use(authMiddleware)
-		.input(z.object({ id: z.string().cuid() }))
-		.query(async () => {
-			return {};
-
-			// const source = await ctx.prisma.source.findUniqueOrThrow({
-			// 	where: { id: input.id }
-			// });
-
-			// const sourceType = source.type;
-			// const sourceAddress = source.address;
-
-			// if (sourceType === 'docker') {
-			// 	try {
-			// 		const returnData = await getDockerInformation({
-			// 			socketPath: sourceAddress
-			// 		});
-			// 		return returnData;
-			// 	} catch (e) {
-			// 		throw new TRPCError({
-			// 			message: 'Error Getting Data From Socket',
-			// 			code: 'BAD_REQUEST'
-			// 		});
-			// 	}
-			// }
-		}),
 	parameters: t.router({
 		updateParameter: t.procedure
 			.use(authMiddleware)

@@ -95,7 +95,7 @@ export const sourceGetOutputValidationSingle = z.object({
 	enabled: z.boolean(),
 	parameters: z
 		.string()
-		.transform((data) => JSON.parse(data))
+		.transform((data) => JSON.parse(data) as Record<string, string>)
 		.optional()
 		.nullable(),
 	defaultRouterTemplateId: z.string().cuid().optional().nullable(),
