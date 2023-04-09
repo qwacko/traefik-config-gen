@@ -1,7 +1,6 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/kit/vite';
-import prismaAdapter from '@lucia-auth/adapter-prisma';
 import 'dotenv/config';
 
 const dontCheckOrigin = process.env.CSRF_CHECK_ORIGIN === 'false';

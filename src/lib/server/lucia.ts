@@ -1,22 +1,20 @@
 import lucia from 'lucia-auth';
 import prismaAdapter from '@lucia-auth/adapter-prisma';
-import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
 import { prisma } from './db';
 import { sveltekit } from 'lucia-auth/middleware';
-
-const useHTTPS = env.HTTPS ? env.HTTPS === 'true' : true;
+import { serverEnv } from './serverEnv';
 
 export const auth = lucia({
 	adapter: prismaAdapter(prisma),
-	env: dev ? 'DEV' : useHTTPS ? 'PROD' : 'DEV',
+	env: serverEnv.LUCIADEV,
 	middleware: sveltekit(),
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username
 		};
-	}
+	},
+	origin: serverEnv.ORIGINS
 });
 
 export type Auth = typeof auth;
