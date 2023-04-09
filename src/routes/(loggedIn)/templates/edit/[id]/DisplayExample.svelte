@@ -1,21 +1,15 @@
 <script lang="ts">
-	import Stack from '$lib/components/Stack.svelte';
-	import Handlebars from 'handlebars';
+	import { processTemplate } from '$lib/helpers/processTemplate';
 
 	export let template: string | undefined;
-	export let exampleData: string | undefined | null = undefined;
 
-	const processExample = (template: string | undefined, exampleData: string | undefined | null) => {
-		const processed = Handlebars.compile(template);
-		try {
-			const result = processed(JSON.parse(exampleData || '{}'));
-			return result;
-		} catch (e) {
-			return 'Template Error';
-		}
-	};
+	export let exampleData:
+		| string
+		| undefined
+		| null
+		| Record<string, string | Record<string, string>> = undefined;
 
-	$: example = processExample(template, exampleData);
+	$: example = processTemplate({ template, variables: exampleData, errorReturn: 'Template Error' });
 </script>
 
 <pre>{example}</pre>

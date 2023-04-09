@@ -4,9 +4,9 @@ import type { Host } from '@prisma/client';
 import { hostAddValidation } from '$lib/schema/hostSchema.js';
 
 export const load = async (event) => {
-	const form = await superValidate(event, hostAddValidation);
-	const templates = await event.locals.trpc.templates.getAll();
-	const sources = await event.locals.trpc.sources.getSources();
+	const form = superValidate(event, hostAddValidation);
+	const templates = event.locals.trpc.templates.getAll();
+	const sources = event.locals.trpc.sources.getSources();
 
 	return { form, templates, sources };
 };

@@ -18,6 +18,8 @@ export const load = async (event) => {
 
 	const templates = await event.locals.trpc.templates.getAll();
 
+	const sources = event.locals.trpc.sources.getSources();
+
 	const formData = {
 		id: currentData.id,
 		title: currentData.title,
@@ -28,12 +30,12 @@ export const load = async (event) => {
 		parameters: currentData.parameters
 	};
 
-	const updateForm = await superValidate(formData, hostUpdateValidation, { id: updateFormId });
-	const setParameterForm = await superValidate(event, hostSetParameterSchema, {
+	const updateForm = superValidate(formData, hostUpdateValidation, { id: updateFormId });
+	const setParameterForm = superValidate(event, hostSetParameterSchema, {
 		id: setParameterFormId
 	});
 
-	return { host: currentData, updateForm, templates, setParameterForm };
+	return { host: currentData, updateForm, templates, setParameterForm, sources };
 };
 
 export const actions = {

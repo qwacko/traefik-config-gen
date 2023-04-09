@@ -12,6 +12,8 @@
 	import SaveIcon from '$lib/components/Icons/SaveIcon.svelte';
 	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
 	import ParameterSettings from '$lib/components/ParameterSettings.svelte';
+	import DisplayExample from '../../../templates/edit/[id]/DisplayExample.svelte';
+	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
 
 	export let data;
 
@@ -40,6 +42,21 @@
 					{...$updateFormConstraints.title}
 				/>
 				<Select
+					title="Source"
+					errorMessage={$updateFormErrors.sourceId}
+					name="sourceId"
+					options={data.sources.map((item) => ({ key: item.id, label: item.title }))}
+					value={$updateForm.sourceId}
+					{...$updateFormConstraints.sourceId}
+				>
+					<svelte:fragment slot="button">
+						<a href="/sources/edit/{data.host.sourceId}" class="btn variant-ghost-tertiary">
+							<EditIcon /></a
+						>
+					</svelte:fragment>
+				</Select>
+
+				<Select
 					title="Router Template"
 					errorMessage={$updateFormErrors.routerTemplateId}
 					name="routerTemplateId"
@@ -49,7 +66,17 @@
 					}))}
 					bind:value={$updateForm.routerTemplateId}
 					{...$updateFormConstraints.routerTemplateId}
-				/>
+				>
+					<svelte:fragment slot="button">
+						<a
+							href="/templates/edit/{data.host.routerTemplateId}"
+							class="btn variant-ghost-tertiary"
+						>
+							<EditIcon /></a
+						>
+					</svelte:fragment>
+				</Select>
+
 				<Select
 					title="Service Template"
 					errorMessage={$updateFormErrors.serviceTemplateId}
@@ -60,7 +87,16 @@
 					}))}
 					bind:value={$updateForm.serviceTemplateId}
 					{...$updateFormConstraints.serviceTemplateId}
-				/>
+				>
+					<svelte:fragment slot="button">
+						<a
+							href="/templates/edit/{data.host.serviceTemplateId}"
+							class="btn variant-ghost-tertiary"
+						>
+							<EditIcon /></a
+						>
+					</svelte:fragment>
+				</Select>
 				<ErrorText message={$updateFormMessage} />
 			</Stack>
 			<svelte:fragment slot="footer">
@@ -90,5 +126,13 @@
 				</Row>
 			</form>
 		</Stack>
+	</CenterCard>
+	<CenterCard title="Output" size="xl">
+		<h3>Variables</h3>
+		<pre>{JSON.stringify(data.host.variables, undefined, 2)}</pre>
+		<h3>Router</h3>
+		<DisplayExample template={data.host.router?.template} exampleData={data.host.variables} />
+		<h3>Service</h3>
+		<DisplayExample template={data.host.service?.template} exampleData={data.host.variables} />
 	</CenterCard>
 </Stack>

@@ -8,8 +8,6 @@ export const load = async (event) => {
 
 	const currentData = await event.locals.trpc.templates.get({ id });
 
-	console.log('Found Template', currentData);
-
 	if (!currentData || !currentData.editable) {
 		throw redirect(302, '/templates');
 	}
@@ -43,8 +41,6 @@ export const actions = {
 		if (!updateForm.valid) {
 			return fail(400, { updateForm });
 		}
-
-		console.log('Updating Template', updateForm.data);
 
 		try {
 			await event.locals.trpc.templates.update(updateForm.data);

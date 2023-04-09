@@ -17,9 +17,9 @@ export const hostUpdateValidation = z.object({
 	title: z.string().optional(),
 	identifier: z.string().optional(),
 	lastSeen: z.date().optional(),
+	sourceId: z.string().cuid().optional(),
 	routerTemplateId: z.string().cuid().optional().nullable(),
-	serviceTemplateId: z.string().cuid().optional().nullable(),
-	parameters: z.string().optional().nullable()
+	serviceTemplateId: z.string().cuid().optional().nullable()
 });
 
 export type hostUpdateValidationType = typeof hostUpdateValidation;

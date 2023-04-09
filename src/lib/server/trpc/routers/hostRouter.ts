@@ -6,6 +6,7 @@ import {
 } from '$lib/schema/hostSchema';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { getHostVariables } from '../helpers/getHostVariables';
 import { t } from '../t';
 
 export const hostRouter = t.router({
@@ -27,7 +28,9 @@ export const hostRouter = t.router({
 			? (JSON.parse(host.parameters) as Record<string, string>)
 			: null;
 
-		return { ...host, parametersObject };
+		const variables = await getHostVariables({ host, prisma: ctx.prisma });
+
+		return { ...host, parametersObject, variables };
 	}),
 	add: t.procedure.input(hostAddValidation).mutation(async ({ ctx, input }) => {
 		const host = await ctx.prisma.host.create({
@@ -36,6 +39,7 @@ export const hostRouter = t.router({
 		return host;
 	}),
 	update: t.procedure.input(hostUpdateValidation).mutation(async ({ ctx, input }) => {
+		console.log('inputData', input);
 		const host = await ctx.prisma.host.update({ where: { id: input.id }, data: input });
 		return host;
 	}),
