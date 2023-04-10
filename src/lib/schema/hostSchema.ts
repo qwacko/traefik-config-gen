@@ -6,8 +6,7 @@ export const hostAddValidation = z.object({
 	lastSeen: z.date().optional().default(new Date()),
 	sourceId: z.string().cuid(),
 	routerTemplateId: z.string().cuid().optional().nullable(),
-	serviceTemplateId: z.string().cuid().optional().nullable(),
-	parameters: z.string().optional()
+	serviceTemplateId: z.string().cuid().optional().nullable()
 });
 
 export type hostAddValidationType = typeof hostAddValidation;

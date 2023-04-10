@@ -23,10 +23,10 @@
 	<CenterCard title="Parameters" size="xl">
 		<Stack alignment="center">
 			{#if data.source.parameters && Object.keys(data.source.parameters).length > 0}
-				{#each Object.keys(data.source.parameters) as currentParameterKey}
+				{#each data.source.parameters as currentParameter}
 					<Row alignment="bottom">
-						<p>{currentParameterKey}</p>
-						<p>{data.source.parameters[currentParameterKey]}</p>
+						<p>{currentParameter.label}</p>
+						<p>{currentParameter.value}</p>
 					</Row>
 				{/each}
 			{:else}

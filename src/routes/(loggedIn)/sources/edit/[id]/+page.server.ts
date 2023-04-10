@@ -68,7 +68,7 @@ export const actions = {
 		}
 
 		try {
-			await event.locals.trpc.sources.parameters.addParameter(addParameterForm.data);
+			await event.locals.trpc.sources.parameters.set(addParameterForm.data);
 		} catch (e) {
 			console.log('Add Parameter Error', e);
 			return fail(400, {
@@ -88,7 +88,7 @@ export const actions = {
 		}
 
 		try {
-			await event.locals.trpc.sources.parameters.removeParameter(removeParameterForm.data);
+			await event.locals.trpc.sources.parameters.remove(removeParameterForm.data);
 		} catch (e) {
 			console.log('Remove Parameter Error', e);
 			return fail(400, {
@@ -107,7 +107,7 @@ export const actions = {
 		}
 
 		try {
-			await event.locals.trpc.sources.parameters.updateParameter(updateParameterForm.data);
+			await event.locals.trpc.sources.parameters.set(updateParameterForm.data);
 		} catch (e) {
 			console.log('Update Parameter Error', e);
 			return fail(400, {

@@ -79,7 +79,7 @@ model Source {
   address                  String
   autoDelete               Boolean           @default(false)
   enabled                  Boolean           @default(true)
-  parameters               String?
+  parameters               Parameter[]
   lastRefresh              DateTime?
   defaultRouter            RouterTemplate?   @relation(fields: [defaultRouterTemplateId], references: [id])
   defaultRouterTemplateId  String?
@@ -96,7 +96,7 @@ model Host {
   id                String           @id @unique @default(cuid())
   title             String
   identifier        String
-  parameters        String?
+  parameters        Parameter[]
   lastSeen          DateTime
   errors            String?
   source            Source           @relation(fields: [sourceId], references: [id])
@@ -109,4 +109,21 @@ model Host {
   serviceTemplateId String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+}
+
+model Parameter {
+  id    String @id @unique @default(cuid())
+  label String
+  value String
+
+  host   Host?   @relation(fields: [hostId], references: [id])
+  hostId String?
+
+  source   Source? @relation(fields: [sourceId], references: [id])
+  sourceId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hostId, sourceId, label], name: "host_source_label")
 }

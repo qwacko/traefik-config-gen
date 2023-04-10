@@ -29,11 +29,6 @@ export const sourceAddValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(true),
-	parameters: z.string().optional(),
-	// .object({})
-	// .catchall(z.string())
-	// .transform((data) => JSON.stringify(data))
-	// .optional(),
 	defaultRouterTemplateId: z.string().cuid().optional(),
 	defaultServiceTemplateId: z.string().cuid().optional()
 });
@@ -94,8 +89,7 @@ export const sourceGetOutputValidationSingle = z.object({
 	autoDelete: z.boolean(),
 	enabled: z.boolean(),
 	parameters: z
-		.string()
-		.transform((data) => JSON.parse(data) as Record<string, string>)
+		.array(z.object({ id: z.string().cuid(), label: z.string(), value: z.string() }))
 		.optional()
 		.nullable(),
 	defaultRouterTemplateId: z.string().cuid().optional().nullable(),

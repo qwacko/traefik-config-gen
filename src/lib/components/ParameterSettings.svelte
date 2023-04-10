@@ -5,8 +5,13 @@
 	import Row from '$lib/components/Row.svelte';
 	import Stack from '$lib/components/Stack.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
+	import type { Parameter } from '@prisma/client';
 
-	export let parameters: Record<string, string> | undefined | null;
+	export let parameters:
+		| Parameter[]
+		| { id: string; label: string; value: string }[]
+		| undefined
+		| null;
 	export let id: string | undefined | null;
 	export let idKey: string;
 	export let setParameterAction: string;
@@ -15,17 +20,17 @@
 
 <Stack>
 	{#if parameters && Object.keys(parameters).length > 0}
-		{#each Object.keys(parameters) as currentParameterKey}
+		{#each parameters as currentParameter}
 			<Row alignment="bottom">
 				<form method="post" action={setParameterAction}>
 					<Row alignment="bottom">
 						<input type="hidden" name={idKey} value={id} />
-						<input type="hidden" name="label" value={currentParameterKey} />
+						<input type="hidden" name="label" value={currentParameter.label} />
 						<TextInput
 							title="Label"
 							name="label2"
 							label="Label"
-							value={currentParameterKey}
+							value={currentParameter.label}
 							errorMessage={null}
 							disabled={true}
 						/>
@@ -33,7 +38,7 @@
 							title="Value"
 							name="value"
 							label="Value"
-							value={parameters[currentParameterKey]}
+							value={currentParameter.value}
 							errorMessage={null}
 						/>
 						<button type="submit" class="btn-icon variant-filled-primary"><SaveIcon /></button>
@@ -41,7 +46,7 @@
 				</form>
 				<form method="post" action={deleteParameterAction}>
 					<input type="hidden" name={idKey} value={id} />
-					<input type="hidden" name="label" value={currentParameterKey} />
+					<input type="hidden" name="label" value={currentParameter.label} />
 					<button type="submit" class="btn-icon variant-filled-error"><DeleteIcon /></button>
 				</form>
 			</Row>

@@ -23,8 +23,6 @@
 		constraints: updateFormConstraints,
 		message: updateFormMessage
 	} = superForm<hostUpdateValidationType>(data.updateForm);
-
-	$: parameters = JSON.parse(data.host.parameters || '{}') as Record<string, string>;
 </script>
 
 <Stack>
@@ -111,7 +109,7 @@
 		<Stack>
 			<ParameterSettings
 				deleteParameterAction="?/deleteParameter"
-				parameters={data.host.parametersObject}
+				parameters={data.host.parameters}
 				id={data.host.id}
 				idKey="hostId"
 				setParameterAction="?/setParameter"

@@ -7,9 +7,9 @@ import {
 	sourceGetOutputValidation,
 	sourceGetOutputValidationSingle,
 	sourceRemoveParameterSchema,
-	sourceUpdateParameterSchema,
 	sourceUpdateValidation
 } from '$lib/schema/sourceSchema';
+import { TRPCError } from '@trpc/server';
 
 export const sourceRouter = t.router({
 	getSource: t.procedure
@@ -19,7 +19,7 @@ export const sourceRouter = t.router({
 		.query(async ({ ctx, input }) => {
 			const data = await ctx.prisma.source.findUnique({
 				where: { id: input },
-				include: { _count: { select: { Host: true } } }
+				include: { _count: { select: { Host: true } }, parameters: true }
 			});
 
 			return data;
@@ -29,7 +29,7 @@ export const sourceRouter = t.router({
 		.output(sourceGetOutputValidation)
 		.query(async ({ ctx }) => {
 			const data = await ctx.prisma.source.findMany({
-				include: { _count: { select: { Host: true } } }
+				include: { _count: { select: { Host: true } }, parameters: true }
 			});
 			return data;
 		}),
@@ -59,61 +59,47 @@ export const sourceRouter = t.router({
 			return ctx.prisma.source.update({ where: { id }, data });
 		}),
 	parameters: t.router({
-		updateParameter: t.procedure
-			.use(authMiddleware)
-			.input(sourceUpdateParameterSchema)
-			.mutation(async ({ ctx, input }) => {
-				const current = await ctx.prisma.source.findFirstOrThrow({
-					where: { id: input.sourceId }
-				});
-
-				const newParameters = current.parameters ? JSON.parse(current.parameters) : undefined;
-
-				if (newParameters) {
-					newParameters[input.label] = input.value;
-					await ctx.prisma.source.update({
-						where: { id: input.sourceId },
-						data: { parameters: JSON.stringify(newParameters) }
-					});
-				}
-				return true;
-			}),
-
-		removeParameter: t.procedure
+		remove: t.procedure
 			.use(authMiddleware)
 			.input(sourceRemoveParameterSchema)
 			.mutation(async ({ ctx, input }) => {
-				const current = await ctx.prisma.source.findFirstOrThrow({
-					where: { id: input.sourceId }
+				const currentParameter = await ctx.prisma.parameter.findFirst({
+					where: { sourceId: input.sourceId, label: input.label }
 				});
 
-				const newParameters = current.parameters ? JSON.parse(current.parameters) : undefined;
-
-				if (newParameters) {
-					delete newParameters[input.label];
-					await ctx.prisma.source.update({
-						where: { id: input.sourceId },
-						data: { parameters: JSON.stringify(newParameters) }
+				if (currentParameter) {
+					await ctx.prisma.parameter.delete({
+						where: { id: currentParameter.id }
 					});
 				}
+
 				return true;
 			}),
-		addParameter: t.procedure
+		set: t.procedure
 			.use(authMiddleware)
 			.input(sourceAddParameterSchema)
 			.mutation(async ({ ctx, input }) => {
-				const current = await ctx.prisma.source.findFirstOrThrow({
+				const source = await ctx.prisma.source.findFirst({
 					where: { id: input.sourceId }
 				});
 
-				const newParameters = current.parameters
-					? { ...JSON.parse(current.parameters), [input.label]: input.value }
-					: { [input.label]: input.value };
+				if (!source) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Source not found' });
 
-				await ctx.prisma.source.update({
-					where: { id: input.sourceId },
-					data: { parameters: JSON.stringify(newParameters) }
+				const currentParameter = await ctx.prisma.parameter.findFirst({
+					where: { sourceId: input.sourceId, label: input.label }
 				});
+
+				if (!currentParameter) {
+					await ctx.prisma.parameter.create({
+						data: { sourceId: input.sourceId, label: input.label, value: input.value }
+					});
+				} else {
+					await ctx.prisma.parameter.update({
+						where: { id: currentParameter.id },
+						data: { value: input.value }
+					});
+				}
+
 				return true;
 			})
 	})

@@ -11,26 +11,22 @@ import { t } from '../t';
 
 export const hostRouter = t.router({
 	getHosts: t.procedure.query(async ({ ctx }) => {
-		const hosts = await ctx.prisma.host.findMany();
+		const hosts = await ctx.prisma.host.findMany({ include: { parameters: true } });
 		return hosts;
 	}),
 	get: t.procedure.input(z.object({ id: z.string().cuid() })).query(async ({ ctx, input }) => {
 		const host = await ctx.prisma.host.findUnique({
 			where: { id: input.id },
-			include: { source: true, router: true, service: true }
+			include: { source: true, router: true, service: true, parameters: true }
 		});
 
 		if (!host) {
 			return host;
 		}
 
-		const parametersObject = host.parameters
-			? (JSON.parse(host.parameters) as Record<string, string>)
-			: null;
-
 		const variables = await getHostVariables({ host, prisma: ctx.prisma });
 
-		return { ...host, parametersObject, variables };
+		return { ...host, variables };
 	}),
 	add: t.procedure.input(hostAddValidation).mutation(async ({ ctx, input }) => {
 		const host = await ctx.prisma.host.create({
@@ -55,30 +51,25 @@ export const hostRouter = t.router({
 
 			if (!host) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Host not found' });
 
-			const parameters = JSON.parse(host.parameters || '{}');
-
-			parameters[input.label] = input.value;
-
-			await ctx.prisma.host.update({
-				where: { id: input.hostId },
-				data: { parameters: JSON.stringify(parameters) }
+			const currentParameter = await ctx.prisma.parameter.findFirst({
+				where: { hostId: input.hostId, label: input.label }
 			});
+
+			if (currentParameter) {
+				await ctx.prisma.parameter.update({
+					where: { id: currentParameter.id },
+					data: { value: input.value }
+				});
+			} else {
+				await ctx.prisma.parameter.create({
+					data: { hostId: input.hostId, label: input.label, value: input.value }
+				});
+			}
 
 			return true;
 		}),
 		remove: t.procedure.input(hostRemoveParameterSchema).mutation(async ({ ctx, input }) => {
-			const host = await ctx.prisma.host.findUnique({ where: { id: input.hostId } });
-
-			if (!host) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Host not found' });
-
-			const parameters = JSON.parse(host.parameters || '{}');
-
-			delete parameters[input.label];
-
-			await ctx.prisma.host.update({
-				where: { id: input.hostId },
-				data: { parameters: JSON.stringify(parameters) }
-			});
+			await ctx.prisma.parameter.deleteMany({ where: input });
 
 			return true;
 		})
