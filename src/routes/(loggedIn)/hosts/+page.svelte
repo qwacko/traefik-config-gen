@@ -15,7 +15,15 @@
 	<Stack>
 		{#each data.hosts as host}
 			<Row>
-				{host.title}
+				<Stack gap="0">
+					<h5>{host.title}</h5>
+					{#each host.parameters as parameter}
+						<Row>
+							<p class="font-bold">{parameter.label} :</p>
+							<p>{parameter.value}</p>
+						</Row>
+					{/each}
+				</Stack>
 				<Space />
 				<Popover message="View {host.title}" id="view">
 					<a href={`/hosts/${host.id}`} class="btn-icon variant-ghost-secondary">
@@ -34,6 +42,6 @@
 				</Popover>
 			</Row>
 		{/each}
-        <a href="/hosts/create" class="btn variant-filled-primary">Create Host</a>
+		<a href="/hosts/create" class="btn variant-filled-primary">Create Host</a>
 	</Stack>
 </CenterCard>
