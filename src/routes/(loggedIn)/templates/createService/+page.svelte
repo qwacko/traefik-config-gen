@@ -34,7 +34,7 @@
 		</Stack>
 		<svelte:fragment slot="footer">
 			<Row>
-				<button type="submit" class="btn variant-filled-primary">Create Router</button>
+				<button type="submit" class="btn variant-filled-primary">Create Service</button>
 				<Space />
 				<a href="/templates" class="btn variant-ghost-primary">Cancel</a>
 			</Row>

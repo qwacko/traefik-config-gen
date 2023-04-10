@@ -23,3 +23,15 @@ export const processTemplate = <Error extends string>({
 		return errorReturn;
 	}
 };
+
+export const getVariableGroups = (templateInformation: string) => {
+	// extract a list of text strings matching {{.*SOURCE.*}} from templateInformation
+	const regex = /{{.*SOURCE\..*}}/g;
+	const matches = templateInformation.match(regex);
+	if (!matches) return [];
+	const groups = matches.map((match) => {
+		const group = match.replace('{{', '').replace('}}', '');
+		return group.trim();
+	});
+	return groups;
+};
