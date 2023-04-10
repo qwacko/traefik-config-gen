@@ -5,7 +5,9 @@ export const load = async (event) => {
 
 	const currentData = await event.locals.trpc.templates.get({ id });
 
-	if (!currentData) throw redirect(302, `/templates`);
+	if (!currentData || currentData._count.Host > 0 || currentData._count.Source === 0) {
+		throw redirect(302, `/templates`);
+	}
 
 	return { template: currentData };
 };

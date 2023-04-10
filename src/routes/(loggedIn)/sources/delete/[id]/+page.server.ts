@@ -5,7 +5,7 @@ export const load = async (event) => {
 
 	const currentData = await event.locals.trpc.sources.getSource(id);
 
-	if (!currentData) throw redirect(302, `/sources`);
+	if (!currentData || currentData._count.Host > 0) throw redirect(302, `/sources`);
 
 	return { source: currentData };
 };

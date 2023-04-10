@@ -17,7 +17,10 @@ export const sourceRouter = t.router({
 		.input(z.string().cuid())
 		.output(sourceGetOutputValidationSingle.nullable())
 		.query(async ({ ctx, input }) => {
-			const data = await ctx.prisma.source.findUnique({ where: { id: input } });
+			const data = await ctx.prisma.source.findUnique({
+				where: { id: input },
+				include: { _count: { select: { Host: true } } }
+			});
 
 			return data;
 		}),
@@ -25,7 +28,9 @@ export const sourceRouter = t.router({
 		.use(authMiddleware)
 		.output(sourceGetOutputValidation)
 		.query(async ({ ctx }) => {
-			const data = await ctx.prisma.source.findMany();
+			const data = await ctx.prisma.source.findMany({
+				include: { _count: { select: { Host: true } } }
+			});
 			return data;
 		}),
 	addSource: t.procedure
@@ -36,7 +41,14 @@ export const sourceRouter = t.router({
 		.use(authMiddleware)
 		.input(z.string().cuid())
 		.mutation(async ({ ctx, input }) => {
-			await ctx.prisma.source.delete({ where: { id: input } });
+			const source = await ctx.prisma.source.findFirst({
+				where: { id: input },
+				include: { _count: { select: { Host: true } } }
+			});
+
+			if (source && source._count.Host === 0) {
+				await ctx.prisma.source.delete({ where: { id: input } });
+			}
 			return true;
 		}),
 	updateSource: t.procedure

@@ -63,11 +63,13 @@
 			<svelte:fragment slot="footer">
 				<Row>
 					<input type="submit" value="Update Template" class="btn variant-filled-primary" />
-					<a
-						role="button"
-						href="/templates/delete/{$updateForm.id}"
-						class="btn variant-filled-error">Delete Template</a
-					>
+					{#if data.template._count.Host === 0 && data.template._count.Source === 0}
+						<a
+							role="button"
+							href="/templates/delete/{$updateForm.id}"
+							class="btn variant-filled-error">Delete Template</a
+						>
+					{/if}
 					<Space />
 					<a role="button" href="/templates" class="btn variant-ghost-primary">Return</a>
 				</Row>

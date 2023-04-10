@@ -29,11 +29,13 @@
 							<EditIcon />
 						</a>
 					</Popover>
-					<Popover message="Delete {source.title}" id="delete">
-						<a href={`/sources/delete/${source.id}`} class="btn-icon variant-ghost-error">
-							<DeleteIcon />
-						</a>
-					</Popover>
+					{#if source._count.Host === 0}
+						<Popover message="Delete {source.title}" id="delete">
+							<a href={`/sources/delete/${source.id}`} class="btn-icon variant-ghost-error">
+								<DeleteIcon />
+							</a>
+						</Popover>
+					{/if}
 				</Row>
 			{/each}
 		</Stack>

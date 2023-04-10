@@ -9,8 +9,6 @@
 	import Row from '$lib/components/Row.svelte';
 	import Space from '$lib/components/Space.svelte';
 	import { enhance } from '$app/forms';
-	import SaveIcon from '$lib/components/Icons/SaveIcon.svelte';
-	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
 	import ParameterSettings from '$lib/components/ParameterSettings.svelte';
 	import DisplayExample from '../../../templates/edit/[id]/DisplayExample.svelte';
 	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
@@ -130,11 +128,15 @@
 	</CenterCard>
 	<CenterCard title="Output" size="xl">
 		<Stack>
-			<h3>Variables</h3>
+			<h3>Variables Available</h3>
 			<pre>{JSON.stringify(data.host.variables, undefined, 2)}</pre>
+			<h3>Variables Used</h3>
+			<pre>{JSON.stringify(
+					getVariableGroups([data.host.router?.template || '', data.host.service?.template || "'"]),
+					undefined,
+					2
+				)}</pre>
 			<h3>Router</h3>
-			<pre>{data.host.router?.template}</pre>
-			<pre>{JSON.stringify(getVariableGroups(data.host.router?.template || ''), undefined, 2)}</pre>
 			<DisplayExample template={data.host.router?.template} exampleData={data.host.variables} />
 			<h3>Service</h3>
 			<DisplayExample template={data.host.service?.template} exampleData={data.host.variables} />

@@ -15,7 +15,8 @@ const templateReturn = z.object({
 	masterSourceId: z.string().cuid().optional().nullable(),
 	editable: z.boolean(),
 	createdAt: z.date(),
-	updatedAt: z.date()
+	updatedAt: z.date(),
+	_count: z.object({ Host: z.number(), Source: z.number() })
 });
 
 export type TemplateReturnType = z.infer<typeof templateReturn>;
@@ -31,13 +32,19 @@ export const templateRouter = t.router({
 		)
 		.query(async ({ ctx }) => {
 			const routerTemplates = (
-				await ctx.prisma.routerTemplate.findMany({ orderBy: { title: 'asc' } })
+				await ctx.prisma.routerTemplate.findMany({
+					orderBy: { title: 'asc' },
+					include: { _count: { select: { Host: true, Source: true } } }
+				})
 			).map((item) => ({
 				...item,
 				type: 'router' as const
 			}));
 			const serviceTemplates = (
-				await ctx.prisma.serviceTemplate.findMany({ orderBy: { title: 'asc' } })
+				await ctx.prisma.serviceTemplate.findMany({
+					orderBy: { title: 'asc' },
+					include: { _count: { select: { Host: true, Source: true } } }
+				})
 			).map((item) => ({
 				...item,
 				type: 'service' as const
@@ -52,7 +59,8 @@ export const templateRouter = t.router({
 		.output(templateReturn.strict().nullable())
 		.query(async ({ ctx, input }) => {
 			const routerTemplate = await ctx.prisma.routerTemplate.findUnique({
-				where: { id: input.id }
+				where: { id: input.id },
+				include: { _count: { select: { Host: true, Source: true } } }
 			});
 
 			if (routerTemplate) {
@@ -60,7 +68,8 @@ export const templateRouter = t.router({
 			}
 
 			const serviceTemplate = await ctx.prisma.serviceTemplate.findUnique({
-				where: { id: input.id }
+				where: { id: input.id },
+				include: { _count: { select: { Host: true, Source: true } } }
 			});
 
 			if (serviceTemplate) {
@@ -111,7 +120,23 @@ export const templateRouter = t.router({
 		.use(authMiddleware)
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.prisma.routerTemplate.deleteMany({ where: { id: input.id } });
-			await ctx.prisma.serviceTemplate.deleteMany({ where: { id: input.id } });
+			const targetRouter = await ctx.prisma.routerTemplate.findUnique({
+				where: { id: input.id },
+				include: { _count: { select: { Host: true, Source: true } } }
+			});
+			const targetService = await ctx.prisma.serviceTemplate.findUnique({
+				where: { id: input.id },
+				include: { _count: { select: { Host: true, Source: true } } }
+			});
+
+			// Make sure that the template is not in use
+			if (targetRouter && targetRouter._count.Host === 0 && targetRouter._count.Source === 0) {
+				await ctx.prisma.routerTemplate.deleteMany({ where: { id: input.id } });
+			}
+
+			// Make sure that the template is not in use
+			if (targetService && targetService._count.Host === 0 && targetService._count.Source === 0) {
+				await ctx.prisma.serviceTemplate.deleteMany({ where: { id: input.id } });
+			}
 		})
 });

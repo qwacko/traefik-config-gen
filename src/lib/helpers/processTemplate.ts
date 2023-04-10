@@ -1,4 +1,4 @@
-import Handlebars from 'handlebars';
+import Handlebars, { templates } from 'handlebars';
 export const processTemplate = <Error extends string>({
 	template,
 	variables,
@@ -24,14 +24,17 @@ export const processTemplate = <Error extends string>({
 	}
 };
 
-export const getVariableGroups = (templateInformation: string) => {
-	// extract a list of text strings matching {{.*SOURCE.*}} from templateInformation
-	const regex = /{{.*SOURCE\..*}}/g;
+export const getVariableGroups = (templatesInformation: string[]) => {
+	const templateInformation = templatesInformation.join(' ');
+
+	const regex = /{{([^}])*}}/g;
+
+	// const regex = /{{[^\}]*}}/;
 	const matches = templateInformation.match(regex);
 	if (!matches) return [];
 	const groups = matches.map((match) => {
-		const group = match.replace('{{', '').replace('}}', '');
-		return group.trim();
+		const group = match.replace('{{', '').replace('}}', '').trim();
+		return group;
 	});
-	return groups;
+	return [...new Set(groups)].sort((a, b) => a.localeCompare(b));
 };

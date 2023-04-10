@@ -100,7 +100,8 @@ export const sourceGetOutputValidationSingle = z.object({
 		.nullable(),
 	defaultRouterTemplateId: z.string().cuid().optional().nullable(),
 	defaultServiceTemplateId: z.string().cuid().optional().nullable(),
-	lastUpdated: z.date().optional().nullable()
+	lastUpdated: z.date().optional().nullable(),
+	_count: z.object({ Host: z.number() })
 });
 
 export const sourceGetOutputValidation = z.array(sourceGetOutputValidationSingle);

@@ -31,11 +31,13 @@
 								<EditIcon />
 							</a>
 						</Popover>
-						<Popover message="Delete {template.title}" id="deleteRouter">
-							<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
-								<DeleteIcon />
-							</a>
-						</Popover>
+						{#if template._count.Host === 0 && template._count.Source === 0}
+							<Popover message="Delete {template.title}" id="deleteRouter">
+								<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
+									<DeleteIcon />
+								</a>
+							</Popover>
+						{/if}
 					</Row>
 				{/each}
 			{/if}
@@ -63,11 +65,13 @@
 								</a>
 							</Popover>
 						{/if}
-						<Popover message="Delete {template.title}" id="deleteService">
-							<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
-								<DeleteIcon />
-							</a>
-						</Popover>
+						{#if template._count.Host === 0 && template._count.Source === 0}
+							<Popover message="Delete {template.title}" id="deleteService">
+								<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
+									<DeleteIcon />
+								</a>
+							</Popover>
+						{/if}
 					</Row>
 				{/each}
 			{/if}
