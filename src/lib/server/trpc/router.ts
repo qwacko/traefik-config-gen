@@ -1,3 +1,4 @@
+import type { inferRouterOutputs } from '@trpc/server';
 import { hostRouter } from './routers/hostRouter';
 import { sourceRouter } from './routers/sourceRouter';
 import { templateRouter } from './routers/templateRouter';
@@ -13,3 +14,4 @@ export const router = t.router({
 
 export type Router = typeof router;
 export type CalledRouter = ReturnType<Router['createCaller']>;
+export type RouterOutput = inferRouterOutputs<Router>;

@@ -3,7 +3,7 @@
 	import Row from '$lib/components/Row.svelte';
 	import Space from '$lib/components/Space.svelte';
 	import Stack from '$lib/components/Stack.svelte';
-	import DisplayExample from '../edit/[id]/DisplayExample.svelte';
+	import DisplayExample from '../../../../lib/components/DisplayExample.svelte';
 	import { updateExampleFormId } from '../edit/[id]/formIds';
 
 	export let data;

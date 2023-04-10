@@ -8,7 +8,7 @@
 	import TextAreaInput from '$lib/components/TextAreaInput.svelte';
 	import type { updateTemplateSchemaType } from '$lib/schema/templateSchema.js';
 	import { superForm } from 'sveltekit-superforms/client';
-	import DisplayExample from './DisplayExample.svelte';
+	import DisplayExample from '../../../../../lib/components/DisplayExample.svelte';
 
 	export let data;
 
