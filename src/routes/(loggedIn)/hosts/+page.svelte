@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
 	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
@@ -25,21 +26,7 @@
 					{/each}
 				</Stack>
 				<Space />
-				<Popover message="View {host.title}" id="view">
-					<a href={`/hosts/${host.id}`} class="btn-icon variant-ghost-secondary">
-						<InfoIcon />
-					</a>
-				</Popover>
-				<Popover message="Edit {host.title}" id="edit">
-					<a href={`/hosts/edit/${host.id}`} class="btn-icon variant-ghost-primary">
-						<EditIcon />
-					</a>
-				</Popover>
-				<Popover message="Delete {host.title}" id="delete">
-					<a href={`/hosts/delete/${host.id}`} class="btn-icon variant-ghost-error">
-						<DeleteIcon />
-					</a>
-				</Popover>
+				<ActionButtons title={host.title} id={host.id} urlPrefix="hosts" />
 			</Row>
 		{/each}
 		<a href="/hosts/create" class="btn variant-filled-primary">Create Host</a>

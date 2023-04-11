@@ -3,7 +3,7 @@
 	import Row from './Row.svelte';
 	import SelectCore from './SelectCore.svelte';
 
-	export let errorMessage: string | string[] | null | undefined;
+	export let errorMessage: string | string[] | null | undefined = undefined;
 	export let title: string | null;
 	export let name: string;
 	export let options: { key: string; label: string }[] = [];
@@ -19,18 +19,20 @@
 				{#if multiple}
 					<Row>
 						<p>{title} ( {value?.length || '0'} )</p>
-						<button on:click={() => (value = [])} class="btn btn-sm variant-ringed-primary"
-							>Clear</button
-						>
+						<button on:click={() => (value = [])} class="btn btn-sm variant-ringed-primary">
+							Clear
+						</button>
 						<button
 							on:click={() => (value = options.map((o) => o.key))}
-							class="btn btn-sm variant-ringed-primary">All</button
+							class="btn btn-sm variant-ringed-primary"
 						>
+							All
+						</button>
 					</Row>
 				{:else}
 					{title}
-				{/if}</span
-			>{/if}
+				{/if}
+			</span>{/if}
 		{#if $$slots.button}
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<slot name="button" />

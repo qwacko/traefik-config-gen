@@ -10,15 +10,11 @@ const updateFormId = 'updateForm';
 const setParameterFormId = 'setParameterForm';
 
 export const load = async (event) => {
-	const id = event.params.id;
+	const data = await event.parent();
 
-	const currentData = await event.locals.trpc.hosts.get({ id });
+	const currentData = data.host;
 
 	if (!currentData) throw redirect(302, `/hosts`);
-
-	const templates = await event.locals.trpc.templates.getAll();
-
-	const sources = event.locals.trpc.sources.getSources();
 
 	const formData = {
 		id: currentData.id,
@@ -35,7 +31,7 @@ export const load = async (event) => {
 		id: setParameterFormId
 	});
 
-	return { host: currentData, updateForm, templates, setParameterForm, sources };
+	return { updateForm, setParameterForm };
 };
 
 export const actions = {

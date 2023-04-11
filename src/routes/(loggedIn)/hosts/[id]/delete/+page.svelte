@@ -6,8 +6,8 @@
 	export let data;
 </script>
 
-<CenterCard title="Delete Host?"
-	>Are you sure you want to delete host <i><b>{data.host.title}</b></i>
+<CenterCard title="Delete Host?">
+	Are you sure you want to delete host <i><b>{data.host.title}</b></i>
 
 	<svelte:fragment slot="footer">
 		<Row>

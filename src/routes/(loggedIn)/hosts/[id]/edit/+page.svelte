@@ -10,9 +10,7 @@
 	import Space from '$lib/components/Space.svelte';
 	import { enhance } from '$app/forms';
 	import ParameterSettings from '$lib/components/ParameterSettings.svelte';
-	import DisplayExample from '../../../../../lib/components/DisplayExample.svelte';
 	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
-	import { getVariableGroups } from '$lib/helpers/processTemplate';
 	import DisplayHostOutput from '$lib/components/DisplayHostOutput.svelte';
 
 	export let data;
@@ -43,14 +41,14 @@
 					title="Source"
 					errorMessage={$updateFormErrors.sourceId}
 					name="sourceId"
-					options={data.sources.map((item) => ({ key: item.id, label: item.title }))}
+					options={data.sources}
 					value={$updateForm.sourceId}
 					{...$updateFormConstraints.sourceId}
 				>
 					<svelte:fragment slot="button">
 						<a href="/sources/edit/{data.host.sourceId}" class="btn variant-ghost-tertiary">
-							<EditIcon /></a
-						>
+							<EditIcon />
+						</a>
 					</svelte:fragment>
 				</Select>
 
@@ -58,10 +56,7 @@
 					title="Router Template"
 					errorMessage={$updateFormErrors.routerTemplateId}
 					name="routerTemplateId"
-					options={data.templates.routerTemplates.map((item) => ({
-						key: item.id,
-						label: item.title
-					}))}
+					options={data.routerTemplates}
 					bind:value={$updateForm.routerTemplateId}
 					{...$updateFormConstraints.routerTemplateId}
 				>
@@ -70,8 +65,8 @@
 							href="/templates/edit/{data.host.routerTemplateId}"
 							class="btn variant-ghost-tertiary"
 						>
-							<EditIcon /></a
-						>
+							<EditIcon />
+						</a>
 					</svelte:fragment>
 				</Select>
 
@@ -79,10 +74,7 @@
 					title="Service Template"
 					errorMessage={$updateFormErrors.serviceTemplateId}
 					name="serviceTemplateId"
-					options={data.templates.serviceTemplates.map((item) => ({
-						key: item.id,
-						label: item.title
-					}))}
+					options={data.serviceTemplates}
 					bind:value={$updateForm.serviceTemplateId}
 					{...$updateFormConstraints.serviceTemplateId}
 				>
@@ -91,8 +83,8 @@
 							href="/templates/edit/{data.host.serviceTemplateId}"
 							class="btn variant-ghost-tertiary"
 						>
-							<EditIcon /></a
-						>
+							<EditIcon />
+						</a>
 					</svelte:fragment>
 				</Select>
 				<ErrorText message={$updateFormMessage} />
