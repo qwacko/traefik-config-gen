@@ -11,7 +11,14 @@
 
 <label class="label">
 	<Row alignment="middle">
-		<input type="checkbox" class="checkbox p-2" bind:value {...$$restProps} {name} {disabled} />
+		<input
+			type="checkbox"
+			class="checkbox p-2"
+			bind:checked={value}
+			{...$$restProps}
+			{name}
+			{disabled}
+		/>
 		{title}
 	</Row>
 	<ErrorText message={errorMessage} />

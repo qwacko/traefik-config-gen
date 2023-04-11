@@ -1,15 +1,10 @@
 import { updateOutputSchema, type UpdateOutputSchemaType } from '$lib/schema/outputSchema';
-import { redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { z } from 'zod';
 
 export const load = async (event) => {
-	const currentDataPromise = event.locals.trpc.outputs.get({ id: event.params.id });
-	const sourcesRaw = event.locals.trpc.sources.getSources();
-	const hostsRaw = event.locals.trpc.hosts.getHosts();
-	const currentData = await currentDataPromise;
-
-	if (!currentData) throw redirect(302, '/outputs');
+	const { output: currentData } = await event.parent();
 
 	const newCurrentData: z.infer<UpdateOutputSchemaType> = {
 		id: currentData.id,
@@ -24,8 +19,25 @@ export const load = async (event) => {
 
 	const form = await superValidate(newCurrentData, updateOutputSchema);
 
-	const sources = (await sourcesRaw).map((source) => ({ key: source.id, label: source.title }));
-	const hosts = (await hostsRaw).map((host) => ({ key: host.id, label: host.title }));
+	return { form };
+};
 
-	return { form, sources, hosts };
+export const actions = {
+	default: async (event) => {
+		const form = await superValidate(event, updateOutputSchema);
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			await event.locals.trpc.outputs.update(form.data);
+			return { form };
+		} catch (e) {
+			console.log('Update Output Error: ', e);
+			return fail(400, {
+				form: { ...form, message: 'Error Updating Output (Possibly Duplicate Title / Address)' }
+			});
+		}
+	}
 };

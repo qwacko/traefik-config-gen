@@ -1,5 +1,5 @@
 import { createOutputSchema } from '$lib/schema/outputSchema';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 
 export const load = async () => {
@@ -16,12 +16,15 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		let id = '';
+
 		try {
-			await event.locals.trpc.outputs.create(form.data);
-			return { form };
+			const newOutput = await event.locals.trpc.outputs.create(form.data);
+			id = newOutput.id;
 		} catch (e) {
 			console.log('Create Output Error: ', e);
 			return fail(400, { form });
 		}
+		throw redirect(302, `/outputs/${id}/edit`);
 	}
 };

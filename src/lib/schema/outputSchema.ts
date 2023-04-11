@@ -4,11 +4,11 @@ export const updateOutputSchema = z.object({
 	id: z.string().cuid(),
 	title: z.string().optional(),
 	address: z.string().optional(),
-	autoUpdate: z.boolean().optional(),
-	includedHosts: z.array(z.string().cuid()).optional(),
-	excludedHosts: z.array(z.string().cuid()).optional(),
-	includedSources: z.array(z.string().cuid()).optional(),
-	excludedSources: z.array(z.string().cuid()).optional()
+	autoUpdate: z.boolean().optional().default(false),
+	includedHosts: z.array(z.string().cuid()).optional().default([]),
+	excludedHosts: z.array(z.string().cuid()).optional().default([]),
+	includedSources: z.array(z.string().cuid()).optional().default([]),
+	excludedSources: z.array(z.string().cuid()).optional().default([])
 });
 
 export type UpdateOutputSchemaType = typeof updateOutputSchema;

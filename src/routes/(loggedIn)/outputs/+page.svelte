@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
 	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
@@ -19,21 +20,7 @@
 					<h5>{output.title}</h5>
 				</Stack>
 				<Space />
-				<Popover message="View {output.title}" id="view">
-					<a href={`/outputs/${output.id}`} class="btn-icon variant-ghost-secondary">
-						<InfoIcon />
-					</a>
-				</Popover>
-				<Popover message="Edit {output.title}" id="edit">
-					<a href={`/outputs/edit/${output.id}`} class="btn-icon variant-ghost-primary">
-						<EditIcon />
-					</a>
-				</Popover>
-				<Popover message="Delete {output.title}" id="delete">
-					<a href={`/outputs/delete/${output.id}`} class="btn-icon variant-ghost-error">
-						<DeleteIcon />
-					</a>
-				</Popover>
+				<ActionButtons title={output.title} id={output.id} urlPrefix="outputs" />
 			</Row>
 		{/each}
 		<a href="/outputs/create" class="btn variant-filled-primary">Create Output Configuration</a>
