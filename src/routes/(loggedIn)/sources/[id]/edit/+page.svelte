@@ -26,9 +26,6 @@
 		taintedMessage: null
 	});
 
-	$: console.log('Page Data : ', data);
-	$: console.log('Form Value', $updateForm);
-
 	const {
 		form: addParameterForm,
 		errors: addParameterFormErrors,
@@ -78,11 +75,12 @@
 						<a
 							role="button"
 							href="/sources/delete/{$updateForm.id}"
-							class="btn variant-filled-error">Delete Source</a
+							class="btn variant-filled-error"
 						>
+							Delete Source
+						</a>
 					{/if}
 					<Space />
-					<a role="button" href="/sources" class="btn variant-ghost-primary">Return</a>
 				</Row>
 			</svelte:fragment>
 		</CenterCard>

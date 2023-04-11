@@ -1,13 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 
 export const load = async (event) => {
+	const parentData = await event.parent();
 	const id = event.params.id;
 
-	const currentData = await event.locals.trpc.sources.getSource(id);
-
-	if (!currentData || currentData._count.Host > 0) throw redirect(302, `/sources`);
-
-	return { source: currentData };
+	if (parentData.source._count.Host > 0) throw redirect(302, `/sources/${id}`);
 };
 
 export const actions = {

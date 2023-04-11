@@ -14,9 +14,8 @@ import {
 } from './formIds';
 
 export const load = async (event) => {
-	const id = event.params.id;
-
-	const currentData = await event.locals.trpc.sources.getSource(id);
+	const parentData = await event.parent();
+	const currentData = parentData.source;
 
 	if (!currentData) {
 		throw redirect(302, '/sources');
@@ -34,7 +33,6 @@ export const load = async (event) => {
 	});
 
 	return {
-		source: currentData,
 		updateForm,
 		addParameterForm,
 		updateParameterForm,
@@ -58,6 +56,7 @@ export const actions = {
 		}
 		return { updateForm };
 	},
+
 	addParameter: async (event) => {
 		const addParameterForm = await superValidate(event, sourceAddParameterSchema, {
 			id: addParameterFormId

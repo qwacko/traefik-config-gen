@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import Center from '$lib/components/Center.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
@@ -19,23 +20,12 @@
 				<Row>
 					{source.title}
 					<Space />
-					<Popover message="View {source.title}" id="view">
-						<a href={`/sources/${source.id}`} class="btn-icon variant-ghost-secondary">
-							<InfoIcon />
-						</a>
-					</Popover>
-					<Popover message="Edit {source.title}" id="edit">
-						<a href={`/sources/edit/${source.id}`} class="btn-icon variant-ghost-primary">
-							<EditIcon />
-						</a>
-					</Popover>
-					{#if source._count.Host === 0}
-						<Popover message="Delete {source.title}" id="delete">
-							<a href={`/sources/delete/${source.id}`} class="btn-icon variant-ghost-error">
-								<DeleteIcon />
-							</a>
-						</Popover>
-					{/if}
+					<ActionButtons
+						title={source.title}
+						id={source.id}
+						urlPrefix="sources"
+						hideDelete={source._count.Host > 0}
+					/>
 				</Row>
 			{/each}
 		</Stack>

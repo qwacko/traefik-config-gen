@@ -6,8 +6,8 @@
 	export let data;
 </script>
 
-<CenterCard title="Delete Source?"
-	>Are you sure you want to delete source <i><b>{data.source.title}</b></i>
+<CenterCard title="Delete Source?">
+	Are you sure you want to delete source <i><b>{data.source.title}</b></i>
 
 	<svelte:fragment slot="footer">
 		<Row>
