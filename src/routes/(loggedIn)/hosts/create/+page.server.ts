@@ -26,6 +26,9 @@ export const actions = {
 		} catch {
 			return fail(400, { form: { ...form, message: 'Error Creating Host' } });
 		}
-		throw redirect(302, `/hosts/edit/${newSource.id}`);
+		if (newSource) {
+			throw redirect(302, `/hosts/edit/${newSource.id}`);
+		}
+		return { form };
 	}
 };

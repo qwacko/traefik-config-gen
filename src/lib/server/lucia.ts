@@ -8,7 +8,7 @@ export const auth = lucia({
 	adapter: prismaAdapter(prisma),
 	env: serverEnv.LUCIADEV,
 	middleware: sveltekit(),
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username

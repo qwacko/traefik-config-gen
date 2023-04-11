@@ -19,6 +19,7 @@
 	$: sources = $page.route.id?.startsWith('/(loggedIn)/sources');
 	$: templates = $page.route.id?.startsWith('/(loggedIn)/templates');
 	$: hosts = $page.route.id?.startsWith('/(loggedIn)/hosts');
+	$: outputs = $page.route.id?.startsWith('/(loggedIn)/outputs');
 </script>
 
 <AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
@@ -33,6 +34,7 @@
 					<li><a href="/sources" class:variant-soft-primary={sources}>Sources</a></li>
 					<li><a href="/templates" class:variant-soft-primary={templates}>Templates</a></li>
 					<li><a href="/hosts" class:variant-soft-primary={hosts}>Hosts</a></li>
+					<li><a href="/outputs" class:variant-soft-primary={outputs}>Outputs</a></li>
 					<li class="pt-4">
 						<form action="/?/logout" method="post">
 							<button type="submit" class="btn variant-filled-primary w-full">Logout</button>

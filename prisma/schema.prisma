@@ -74,7 +74,7 @@ model ServiceTemplate {
 
 model Source {
   id                       String            @id @unique @default(cuid())
-  title                    String
+  title                    String            @unique
   type                     String
   address                  String
   autoDelete               Boolean           @default(false)
@@ -88,13 +88,15 @@ model Source {
   ownedServiceTemplates    ServiceTemplate[] @relation(name: "sourceServiceTemplates")
   ownedRouterTemplates     RouterTemplate[]  @relation(name: "sourceRouterTemplates")
   Host                     Host[]
+  includedIn               OutputConfig[]    @relation(name: "outputConfigIncludedSources")
+  excludedFrom             OutputConfig[]    @relation(name: "outputConfigExcludedSources")
   createdAt                DateTime          @default(now())
   updatedAt                DateTime          @updatedAt
 }
 
 model Host {
   id                String           @id @unique @default(cuid())
-  title             String
+  title             String           @unique
   identifier        String
   parameters        Parameter[]
   lastSeen          DateTime
@@ -107,6 +109,8 @@ model Host {
   customService     String?
   service           ServiceTemplate? @relation(fields: [serviceTemplateId], references: [id])
   serviceTemplateId String?
+  includedIn        OutputConfig[]   @relation(name: "outputConfigIncludedHosts")
+  excludedFrom      OutputConfig[]   @relation(name: "outputConfigExcludedHosts")
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 }
@@ -126,4 +130,30 @@ model Parameter {
   updatedAt DateTime @updatedAt
 
   @@unique([hostId, sourceId, label], name: "host_source_label")
+}
+
+model OutputConfig {
+  id              String          @id @unique @default(cuid())
+  title           String          @unique
+  address         String          @unique
+  currentOutput   String
+  outputHistory   OutputHistory[]
+  includedHosts   Host[]          @relation(name: "outputConfigIncludedHosts")
+  excludedHosts   Host[]          @relation(name: "outputConfigExcludedHosts")
+  includedSources Source[]        @relation(name: "outputConfigIncludedSources")
+  excludedSources Source[]        @relation(name: "outputConfigExcludedSources")
+  autoUpdate      Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model OutputHistory {
+  id          String       @id @unique @default(cuid())
+  current     Boolean      @default(false)
+  changeTitle String
+  output      String
+  config      OutputConfig @relation(fields: [configId], references: [id])
+  configId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
