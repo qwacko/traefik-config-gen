@@ -12,22 +12,22 @@
 	<CenterCard title="Host" size="xl">
 		<Stack>
 			<h4>Configuration</h4>
-			<Row
-				><p class="font-bold">Source :</p>
-				<a href="/sources/{data.host.source.id}">{data.host.source.title}</a></Row
-			>
-			<Row
-				><p class="font-bold">Router Template :</p>
+			<Row>
+				<p class="font-bold">Source :</p>
+				<a href="/sources/{data.host.source.id}">{data.host.source.title}</a>
+			</Row>
+			<Row>
+				<p class="font-bold">Router Template :</p>
 				{#if data.host.router}
 					<a href="/templates/{data.host.router.id}">{data.host.router.title}</a>
-				{/if}</Row
-			>
-			<Row
-				><p class="font-bold">Service Template :</p>
+				{/if}
+			</Row>
+			<Row>
+				<p class="font-bold">Service Template :</p>
 				{#if data.host.service}
 					<a href="/templates/{data.host.service.id || ''}">{data.host.service.title || ''}</a>
-				{/if}</Row
-			>
+				{/if}
+			</Row>
 			<h4>Parameters</h4>
 
 			{#if data.host.parameters.length > 0}
@@ -44,7 +44,7 @@
 
 		<svelte:fragment slot="footer">
 			<Row>
-				<a href="/hosts/edit/{data.host.id}" class="btn variant-filled-primary">Edit Host</a>
+				<a href="/hosts/{data.host.id}/edit" class="btn variant-filled-primary">Edit Host</a>
 				<Space />
 				<a href="/hosts" class="btn variant-ghost-primary">Return</a>
 			</Row>

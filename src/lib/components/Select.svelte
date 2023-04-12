@@ -9,8 +9,6 @@
 	export let options: { key: string; label: string }[] = [];
 	export let value: string | null | undefined | string[];
 	export let multiple: boolean = false;
-
-	$: console.log('Input Value', value);
 </script>
 
 {#if options.length > 0}

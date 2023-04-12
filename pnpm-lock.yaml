@@ -12,11 +12,13 @@ specifiers:
   '@tailwindcss/forms': ^0.5.3
   '@trpc/client': ^10.19.1
   '@trpc/server': ^10.19.1
+  '@types/diff': ^5.0.3
   '@types/ws': ^8.5.4
   '@typescript-eslint/eslint-plugin': ^5.58.0
   '@typescript-eslint/parser': ^5.58.0
   autoprefixer: ^10.4.14
   delay: ^5.0.0
+  diff: ^5.1.0
   dotenv: ^16.0.3
   eslint: ^8.38.0
   eslint-config-prettier: ^8.8.0
@@ -49,6 +51,7 @@ dependencies:
   '@trpc/client': 10.19.1_@trpc+server@10.19.1
   '@trpc/server': 10.19.1
   delay: 5.0.0
+  diff: 5.1.0
   dotenv: 16.0.3
   handlebars: 4.7.7
   lucia-auth: 1.0.0
@@ -65,6 +68,7 @@ devDependencies:
   '@sveltejs/adapter-node': 1.2.3_@sveltejs+kit@1.15.2
   '@sveltejs/kit': 1.15.2_svelte@3.58.0+vite@4.2.1
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
+  '@types/diff': 5.0.3
   '@types/ws': 8.5.4
   '@typescript-eslint/eslint-plugin': 5.58.0_gjoxkwycl3ml7yxlw3iuo7gyna
   '@typescript-eslint/parser': 5.58.0_voubu7prgxjfsfbgx5d4sqnwiy
@@ -623,6 +627,10 @@ packages:
   /@types/cookie/0.5.1:
     resolution: {integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g==}
 
+  /@types/diff/5.0.3:
+    resolution: {integrity: sha512-amrLbRqTU9bXMCc6uX0sWpxsQzRIo9z6MJPkH1pkez/qOxuqSZVuryJAWoBRq94CeG8JxY+VK4Le9HtjQR5T9A==}
+    dev: true
+
   /@types/estree/1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
 
@@ -1128,6 +1136,11 @@ packages:
   /didyoumean/1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
     dev: true
+
+  /diff/5.1.0:
+    resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
+    engines: {node: '>=0.3.1'}
+    dev: false
 
   /dir-glob/3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}

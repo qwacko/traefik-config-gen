@@ -4,9 +4,12 @@ import {
 	updateOutputCurrentSchema,
 	updateOutputSchema
 } from '$lib/schema/outputSchema';
+import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { authMiddleware } from '../middleware/auth';
 import { t } from '../t';
+import { generateReturnFromFilters } from '../helpers/generateReturnFromFilters';
+import { z } from 'zod';
 
 export const outputRouter = t.router({
 	getAll: t.procedure.use(authMiddleware).query(async ({ ctx }) => {
@@ -116,6 +119,47 @@ export const outputRouter = t.router({
 			}
 		});
 
-		return `Output Testing : ${output?.title}`;
-	})
+		if (!output) throw new TRPCError({ code: 'NOT_FOUND' });
+
+		const whereFilter: Prisma.HostWhereInput = {
+			AND: [
+				output.includedHosts.length > 0
+					? { id: { in: output.includedHosts.map((host) => host.id) } }
+					: {},
+				output.excludedHosts.length > 0
+					? { id: { notIn: output.excludedHosts.map((host) => host.id) } }
+					: {},
+				output.includedSources.length > 0
+					? { source: { id: { in: output.includedSources.map((source) => source.id) } } }
+					: {},
+				output.excludedSources.length > 0
+					? { source: { id: { notIn: output.excludedSources.map((source) => source.id) } } }
+					: {}
+			]
+		};
+
+		return generateReturnFromFilters({ filters: whereFilter, prisma: ctx.prisma });
+	}),
+	getOutput: t.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				outputId: z.string().cuid(),
+				historyId: z.string().cuid().optional()
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const output = await ctx.prisma.outputHistory.findFirst({
+				where: {
+					configId: input.outputId,
+					id: input.historyId,
+					current: input.historyId ? undefined : true
+				},
+				include: { config: true }
+			});
+
+			if (!output) return undefined;
+
+			return output;
+		})
 });

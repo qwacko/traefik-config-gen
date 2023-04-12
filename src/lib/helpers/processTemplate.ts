@@ -1,4 +1,4 @@
-import Handlebars, { templates } from 'handlebars';
+import Handlebars from 'handlebars';
 export const processTemplate = <Error extends string>({
 	template,
 	variables,

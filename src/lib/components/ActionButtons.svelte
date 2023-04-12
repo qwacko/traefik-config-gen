@@ -75,5 +75,5 @@
 			</a>
 		</Popover>
 	{/if}
-	<slot name="lastButtons" />
+	<slot />
 </Row>
