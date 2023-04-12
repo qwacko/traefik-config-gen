@@ -21,6 +21,7 @@
 		viewHighlighted={view}
 		editHighlighted={edit}
 		deleteHighlighted={deletePage}
+		showList={true}
 		hidePopups={true}
 		hideDelete={data.template._count.Host > 0 || data.template._count.Source > 0}
 	/>

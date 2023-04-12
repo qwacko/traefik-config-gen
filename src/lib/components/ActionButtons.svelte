@@ -2,6 +2,7 @@
 	import DeleteIcon from './Icons/DeleteIcon.svelte';
 	import EditIcon from './Icons/EditIcon.svelte';
 	import InfoIcon from './Icons/InfoIcon.svelte';
+	import ListIcon from './Icons/ListIcon.svelte';
 	import Popover from './Popover.svelte';
 	import Row from './Row.svelte';
 
@@ -12,16 +13,30 @@
 	export let hideEdit: boolean = false;
 	export let hideView: boolean = false;
 	export let hideDelete: boolean = false;
+	export let showList: boolean = false;
 
 	export let editHighlighted: boolean = false;
 	export let viewHighlighted: boolean = false;
 	export let deleteHighlighted: boolean = false;
+	export let listHighlighted: boolean = false;
 
 	export let hidePopups: boolean = false;
 </script>
 
 <Row>
 	<slot name="firstButtons" />
+	{#if showList}
+		<Popover message={hidePopups ? undefined : `List`} id="list">
+			<a
+				href="/{urlPrefix}"
+				class="btn-icon"
+				class:variant-filled-primary={listHighlighted}
+				class:variant-ghost-secondary={!listHighlighted}
+			>
+				<ListIcon />
+			</a>
+		</Popover>
+	{/if}
 	{#if !hideView}
 		<Popover message={hidePopups ? undefined : `View ${title}`} id="view">
 			<a

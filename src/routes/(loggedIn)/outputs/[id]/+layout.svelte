@@ -21,6 +21,7 @@
 		viewHighlighted={view}
 		editHighlighted={edit}
 		deleteHighlighted={deletePage}
+		showList={true}
 		hidePopups={true}
 	/>
 	<div class="flex p-1" />
