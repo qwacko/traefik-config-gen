@@ -9,6 +9,7 @@
 	import type { updateTemplateSchemaType } from '$lib/schema/templateSchema.js';
 	import { superForm } from 'sveltekit-superforms/client';
 	import DisplayExample from '$lib/components/DisplayExample.svelte';
+	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 
 	export let data;
 
@@ -33,8 +34,8 @@
 	});
 </script>
 
-<form method="post" use:updateFormEnhance action="?/update">
-	<Stack gap="0" alignment="center">
+<Stack gap="0" alignment="center">
+	<form method="post" use:updateFormEnhance action="?/update">
 		<CenterCard
 			title="Edit {data.template.type === 'router' ? 'Router' : 'Service'} Template"
 			size="xl"
@@ -97,5 +98,10 @@
 				<DisplayExample template={$updateForm.template} exampleData={$updateForm.exampleData} />
 			</Stack>
 		</CenterCard>
-	</Stack>
-</form>
+	</form>
+	<CenterCard size="xl" title="Hosts">
+		<Stack>
+			<DisplayHostsList hosts={data.hosts} />
+		</Stack>
+	</CenterCard>
+</Stack>

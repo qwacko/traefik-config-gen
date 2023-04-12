@@ -8,5 +8,8 @@ export const load = async (event) => {
 	if (!currentData) {
 		throw redirect(302, '/sources');
 	}
-	return { source: currentData };
+
+	const hosts = (await event.locals.trpc.hosts.getHosts()).filter((h) => h.sourceId === id);
+
+	return { source: currentData, hosts };
 };

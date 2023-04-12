@@ -2,6 +2,7 @@
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import Stack from '$lib/components/Stack.svelte';
 	import DisplayExample from '$lib/components/DisplayExample.svelte';
+	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 
 	export let data;
 
@@ -25,5 +26,8 @@
 			<h4>Example Output</h4>
 			<DisplayExample template={data.template.template} exampleData={data.template.exampleData} />
 		</Stack>
+	</CenterCard>
+	<CenterCard size="xl" title="Hosts">
+		<DisplayHostsList hosts={data.hosts} />
 	</CenterCard>
 </Stack>

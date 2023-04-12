@@ -1,5 +1,5 @@
 import { processTemplate } from '$lib/helpers/processTemplate';
-import { Prisma, PrismaClient } from '@prisma/client';
+import type { Prisma, PrismaClient } from '@prisma/client';
 import { getHostVariables } from './getHostVariables';
 
 export const generateReturnFromFilters = async ({
@@ -57,5 +57,5 @@ export const generateReturnFromFilters = async ({
 		return { ...acc, ...curr };
 	}, {});
 
-	return { routers: routerOutputObject, services: serviceOutputObject };
+	return { http: { routers: routerOutputObject, services: serviceOutputObject } };
 };

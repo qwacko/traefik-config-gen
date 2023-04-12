@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CenterCard from '$lib/components/CenterCard.svelte';
+	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 	import Row from '$lib/components/Row.svelte';
 	import Space from '$lib/components/Space.svelte';
 	import Stack from '$lib/components/Stack.svelte';
@@ -16,7 +17,7 @@
 					Edit
 				</a>
 				<Space />
-				<a role="button" href="/sources/" class="btn variant-ghost-primary"> Return </a>
+				<a role="button" href="/sources/" class="btn variant-ghost-primary">Return</a>
 			</Row>
 		</svelte:fragment>
 	</CenterCard>
@@ -33,5 +34,8 @@
 				<p>No Parameters Defined</p>
 			{/if}
 		</Stack>
+	</CenterCard>
+	<CenterCard size="xl" title="Hosts">
+		<DisplayHostsList hosts={data.hosts} />
 	</CenterCard>
 </Stack>

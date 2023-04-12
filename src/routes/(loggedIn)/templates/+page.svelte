@@ -43,25 +43,13 @@
 					<Row>
 						{template.title}
 						<Space />
-						<Popover message="View {template.title}" id="viewService">
-							<a href={`/templates/${template.id}`} class="btn-icon variant-ghost-secondary">
-								<InfoIcon />
-							</a>
-						</Popover>
-						{#if template.editable}
-							<Popover message="Edit {template.title}" id="editService">
-								<a href={`/templates/edit/${template.id}`} class="btn-icon variant-ghost-primary">
-									<EditIcon />
-								</a>
-							</Popover>
-						{/if}
-						{#if template._count.Host === 0 && template._count.Source === 0}
-							<Popover message="Delete {template.title}" id="deleteService">
-								<a href={`/templates/delete/${template.id}`} class="btn-icon variant-ghost-error">
-									<DeleteIcon />
-								</a>
-							</Popover>
-						{/if}
+						<ActionButtons
+							title={template.title}
+							id={template.id}
+							urlPrefix="templates"
+							hideEdit={!template.editable}
+							hideDelete={template._count.Host > 0 || template._count.Source > 0}
+						/>
 					</Row>
 				{/each}
 			{/if}

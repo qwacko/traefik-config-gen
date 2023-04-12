@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import CenterCard from '$lib/components/CenterCard.svelte';
+	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 	import DeleteIcon from '$lib/components/Icons/DeleteIcon.svelte';
 	import EditIcon from '$lib/components/Icons/EditIcon.svelte';
 	import InfoIcon from '$lib/components/Icons/InfoIcon.svelte';
@@ -14,21 +15,7 @@
 
 <CenterCard size="xl" title="Hosts">
 	<Stack>
-		{#each data.hosts as host}
-			<Row>
-				<Stack gap="0">
-					<h5>{host.title}</h5>
-					{#each host.parameters as parameter}
-						<Row>
-							<p class="font-bold">{parameter.label} :</p>
-							<p>{parameter.value}</p>
-						</Row>
-					{/each}
-				</Stack>
-				<Space />
-				<ActionButtons title={host.title} id={host.id} urlPrefix="hosts" />
-			</Row>
-		{/each}
+		<DisplayHostsList hosts={data.hosts} />
 		<a href="/hosts/create" class="btn variant-filled-primary">Create Host</a>
 	</Stack>
 </CenterCard>

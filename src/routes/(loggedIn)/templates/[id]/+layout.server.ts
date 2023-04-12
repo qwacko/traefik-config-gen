@@ -9,5 +9,9 @@ export const load = async (event) => {
 		throw redirect(302, '/templates');
 	}
 
-	return { template: currentData };
+	const hosts = (await event.locals.trpc.hosts.getHosts()).filter(
+		(h) => h.routerTemplateId === id || h.serviceTemplateId === id
+	);
+
+	return { template: currentData, hosts };
 };
