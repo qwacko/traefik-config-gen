@@ -15,7 +15,6 @@
 
 	$: homePage = $page.route.id?.startsWith('/(open)');
 	$: users = $page.route.id?.startsWith('/(loggedIn)/users');
-	$: user = $page.route.id?.startsWith('/(loggedIn)/user') && !users;
 	$: sources = $page.route.id?.startsWith('/(loggedIn)/sources');
 	$: templates = $page.route.id?.startsWith('/(loggedIn)/templates');
 	$: hosts = $page.route.id?.startsWith('/(loggedIn)/hosts');
@@ -29,7 +28,6 @@
 			<ul>
 				<li><a href="/" class:variant-soft-primary={homePage}>Home</a></li>
 				{#if data.user.user}
-					<li><a href="/user" class:variant-soft-primary={user}>User</a></li>
 					<li><a href="/users" class:variant-soft-primary={users}>Users</a></li>
 					<li><a href="/sources" class:variant-soft-primary={sources}>Sources</a></li>
 					<li><a href="/templates" class:variant-soft-primary={templates}>Templates</a></li>
