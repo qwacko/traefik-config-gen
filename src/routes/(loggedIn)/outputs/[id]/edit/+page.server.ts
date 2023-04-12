@@ -4,7 +4,8 @@ import { superValidate } from 'sveltekit-superforms/server';
 import type { z } from 'zod';
 
 export const load = async (event) => {
-	const { output: currentData } = await event.parent();
+	const parentData = await event.parent();
+	const { output: currentData } = parentData;
 
 	const newCurrentData: z.infer<UpdateOutputSchemaType> = {
 		id: currentData.id,

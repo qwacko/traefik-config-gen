@@ -8,7 +8,7 @@
 	import TextAreaInput from '$lib/components/TextAreaInput.svelte';
 	import type { updateTemplateSchemaType } from '$lib/schema/templateSchema.js';
 	import { superForm } from 'sveltekit-superforms/client';
-	import DisplayExample from '../../../../../lib/components/DisplayExample.svelte';
+	import DisplayExample from '$lib/components/DisplayExample.svelte';
 
 	export let data;
 
@@ -67,8 +67,10 @@
 						<a
 							role="button"
 							href="/templates/delete/{$updateForm.id}"
-							class="btn variant-filled-error">Delete Template</a
+							class="btn variant-filled-error"
 						>
+							Delete Template
+						</a>
 					{/if}
 					<Space />
 					<a role="button" href="/templates" class="btn variant-ghost-primary">Return</a>

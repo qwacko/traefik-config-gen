@@ -1,10 +1,7 @@
 <script lang="ts">
 	import CenterCard from '$lib/components/CenterCard.svelte';
-	import Row from '$lib/components/Row.svelte';
-	import Space from '$lib/components/Space.svelte';
 	import Stack from '$lib/components/Stack.svelte';
-	import DisplayExample from '../../../../lib/components/DisplayExample.svelte';
-	import { updateExampleFormId } from '../edit/[id]/formIds';
+	import DisplayExample from '$lib/components/DisplayExample.svelte';
 
 	export let data;
 
@@ -12,25 +9,10 @@
 </script>
 
 <Stack gap="0">
-	<CenterCard title={data.template.title} size="xl">
-		<Stack
-			>Data Goes Here
-			<h4>Template</h4>
+	<CenterCard title="Template Configuration" size="xl">
+		<Stack>
 			<pre>{data.template.template}</pre>
 		</Stack>
-		<svelte:fragment slot="footer">
-			<Row>
-				<a
-					role="button"
-					href="/templates/edit/{data.template.id}"
-					class="btn variant-ghost-primary"
-				>
-					Edit
-				</a>
-				<Space />
-				<a role="button" href="/templates/" class="btn variant-ghost-primary"> Return </a>
-			</Row>
-		</svelte:fragment>
 	</CenterCard>
 	<CenterCard title="Example" size="xl">
 		<Stack>

@@ -4,9 +4,8 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { updateExampleFormId, updateFormId } from './formIds';
 
 export const load = async (event) => {
-	const id = event.params.id;
-
-	const currentData = await event.locals.trpc.templates.get({ id });
+	const parentData = await event.parent();
+	const currentData = parentData.template;
 
 	if (!currentData || !currentData.editable) {
 		throw redirect(302, '/templates');
