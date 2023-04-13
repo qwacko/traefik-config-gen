@@ -47,7 +47,6 @@ const checkOutput: Handle = async ({ event, resolve }) => {
 			return new Response(outputText?.output || '');
 		}
 	}
-	console.timeEnd();
 
 	return await resolve(event);
 };
