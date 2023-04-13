@@ -21,6 +21,12 @@ export const sourceAddValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(false),
+	autoUpdate: z
+		.string()
+		.transform(() => true)
+		.or(z.boolean())
+		.optional()
+		.default(false),
 	enabled: z
 		.string()
 		.transform(() => true)
@@ -44,6 +50,12 @@ export const sourceUpdateValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(false),
+	autoUpdate: z
+		.string()
+		.transform(() => true)
+		.or(z.boolean())
+		.optional()
+		.default(false),
 	enabled: z
 		.string()
 		.transform(() => true)
@@ -62,6 +74,7 @@ export const sourceGetOutputValidationSingle = z.object({
 	type: z.enum(sourceTypeOptions),
 	address: z.string(),
 	autoDelete: z.boolean(),
+	autoUpdate: z.boolean(),
 	enabled: z.boolean(),
 	parameters: z
 		.array(z.object({ id: z.string().cuid(), label: z.string(), value: z.string() }))

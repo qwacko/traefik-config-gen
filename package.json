@@ -24,6 +24,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.58.0",
 		"@typescript-eslint/parser": "^5.58.0",
 		"autoprefixer": "^10.4.14",
+		"devalue": "^4.3.0",
 		"diff": "^5.1.0",
 		"eslint": "^8.38.0",
 		"eslint-config-prettier": "^8.8.0",
@@ -40,7 +41,8 @@
 		"typescript": "^5.0.4",
 		"unplugin-icons": "^0.16.1",
 		"vite": "^4.2.1",
-		"vitest": "^0.30.0"
+		"vitest": "^0.30.0",
+		"yaml": "^2.2.1"
 	},
 	"type": "module",
 	"dependencies": {

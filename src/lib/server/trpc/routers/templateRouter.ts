@@ -51,8 +51,6 @@ export const templateRouter = t.router({
 				type: 'service' as const
 			}));
 
-			console.log('First Router Template', routerTemplates[0]);
-
 			return { routerTemplates, serviceTemplates };
 		}),
 

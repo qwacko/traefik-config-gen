@@ -80,6 +80,7 @@
 							Delete Source
 						</a>
 					{/if}
+
 					<Space />
 				</Row>
 			</svelte:fragment>
@@ -119,4 +120,12 @@
 			{#if $addParameterFormMessage}<ErrorText message={$addParameterFormMessage} />{/if}
 		</Stack>
 	</CenterCard>
+	{#if data.source.type === 'YAML'}
+		<CenterCard title="YAML" size="xl">
+			<form method="post" action="?/refresh">
+				<input type="hidden" name="id" bind:value={$updateForm.id} />
+				<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
+			</form>
+		</CenterCard>
+	{/if}
 </Stack>

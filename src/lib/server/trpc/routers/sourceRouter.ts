@@ -10,6 +10,8 @@ import {
 	sourceUpdateValidation
 } from '$lib/schema/sourceSchema';
 import { TRPCError } from '@trpc/server';
+import { idSchema } from '$lib/schema/idSchema';
+import { loadYAML } from '../helpers/loadYAML';
 
 export const sourceRouter = t.router({
 	getSource: t.procedure
@@ -57,6 +59,20 @@ export const sourceRouter = t.router({
 		.mutation(async ({ ctx, input }) => {
 			const { id, ...data } = input;
 			return ctx.prisma.source.update({ where: { id }, data });
+		}),
+	refreshSource: t.procedure
+		.use(authMiddleware)
+		.input(idSchema)
+		.mutation(async ({ ctx, input }) => {
+			const source = await ctx.prisma.source.findUnique({ where: { id: input.id } });
+			if (!source) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Source not found' });
+			if (source.type !== 'YAML')
+				throw new TRPCError({ code: 'BAD_REQUEST', message: 'Source is not a YAML file' });
+
+			const { data, error } = await loadYAML(source.address);
+
+			console.log('YAML Error', error);
+			console.log('YAML Data', data);
 		}),
 	parameters: t.router({
 		remove: t.procedure
