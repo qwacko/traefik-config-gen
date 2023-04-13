@@ -20,7 +20,15 @@
 			{:else}
 				{#each data.routerTemplates as template}
 					<Row>
-						{template.title}
+						<Stack gap="0">
+							<h5>{template.title}</h5>
+							<Row>
+								<p class="font-bold">Sources :</p>
+								<p>{template._count.Source}</p>
+								<p class="font-bold">Hosts:</p>
+								<p>{template._count.Host}</p>
+							</Row>
+						</Stack>
 						<Space />
 						<ActionButtons
 							title={template.title}
@@ -41,7 +49,15 @@
 			{:else}
 				{#each data.serviceTemplates as template}
 					<Row>
-						{template.title}
+						<Stack gap="0">
+							<h5>{template.title}</h5>
+							<Row>
+								<p class="font-bold">Sources :</p>
+								<p>{template._count.Source}</p>
+								<p class="font-bold">Hosts:</p>
+								<p>{template._count.Host}</p>
+							</Row>
+						</Stack>
 						<Space />
 						<ActionButtons
 							title={template.title}

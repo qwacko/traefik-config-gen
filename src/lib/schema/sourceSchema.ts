@@ -1,21 +1,19 @@
 import { z } from 'zod';
 
-const sourceTypeOptions = ['docker', 'manual', 'yaml', 'other'] as const;
-type sourceTypeOptionsType = 'docker' | 'manual' | 'yaml' | 'other';
+const sourceTypeOptions = ['Docker', 'Manual', 'YAML', 'Other'] as const;
+type sourceTypeOptionsType = 'Docker' | 'Manual' | 'YAML' | 'Other';
 
 export type sourceTypeDropdownType = { key: sourceTypeOptionsType; label: string }[];
 export const sourceTypeDropdown: sourceTypeDropdownType = [
-	{ key: 'docker', label: 'Docker' },
-	{ key: 'manual', label: 'Manual' },
-	{ key: 'yaml', label: 'YAML' },
-	{ key: 'other', label: 'Other' }
+	{ key: 'Docker', label: 'Docker' },
+	{ key: 'Manual', label: 'Manual' },
+	{ key: 'YAML', label: 'YAML' },
+	{ key: 'Other', label: 'Other' }
 ];
-
-const sourceTypeOptionsEditable = [...sourceTypeOptions];
 
 export const sourceAddValidation = z.object({
 	title: z.string(),
-	type: z.enum(sourceTypeOptions).default('manual'),
+	type: z.enum(sourceTypeOptions).default('Manual'),
 	address: z.string(),
 	autoDelete: z
 		.string()
@@ -38,7 +36,7 @@ export type sourceAddValidationType = typeof sourceAddValidation;
 export const sourceUpdateValidation = z.object({
 	id: z.string().cuid(),
 	title: z.string(),
-	type: z.enum(sourceTypeOptions),
+	type: z.enum(sourceTypeOptions).optional(),
 	address: z.string(),
 	autoDelete: z
 		.string()
@@ -61,30 +59,7 @@ export type sourceUpdateValidationType = typeof sourceUpdateValidation;
 export const sourceGetOutputValidationSingle = z.object({
 	id: z.string().cuid(),
 	title: z.string(),
-	type: z
-		.string()
-		.superRefine((val, ctx) => {
-			if (!sourceTypeOptions.includes(val as (typeof sourceTypeOptionsEditable)[0])) {
-				const options = [...sourceTypeOptions];
-				ctx.addIssue({
-					message: `Incorrect Type ${val}`,
-					code: 'invalid_enum_value',
-					path: ctx.path,
-					fatal: true,
-					options,
-					received: val
-				});
-			}
-		})
-		.transform((val) => {
-			const data = sourceTypeOptions.reduce((prev, current) => {
-				if (val === current) {
-					return current;
-				}
-				return prev;
-			}, 'docker');
-			return data;
-		}),
+	type: z.enum(sourceTypeOptions),
 	address: z.string(),
 	autoDelete: z.boolean(),
 	enabled: z.boolean(),

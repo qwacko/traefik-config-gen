@@ -17,7 +17,7 @@
 
 		<Row>
 			<b>Address :</b>
-			<p>{data.output.address}</p>
+			<a href="/{data.output.address}">/{data.output.address}</a>
 		</Row>
 
 		<Row>

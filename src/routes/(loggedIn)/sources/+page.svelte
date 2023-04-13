@@ -18,7 +18,15 @@
 		<Stack>
 			{#each data.sources as source}
 				<Row>
-					{source.title}
+					<Stack gap="0">
+						<h5>{source.title}</h5>
+						<Row>
+							<p class="font-bold">Type:</p>
+							<p>{source.type}</p>
+							<p class="font-bold">Hosts:</p>
+							<p>{source._count.Host}</p>
+						</Row>
+					</Stack>
 					<Space />
 					<ActionButtons
 						title={source.title}

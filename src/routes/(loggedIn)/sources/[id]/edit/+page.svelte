@@ -62,7 +62,7 @@
 					name="type"
 					title="Source Type"
 					errorMessage={$updateFormErrors.type}
-					options={sourceTypeDropdown}
+					options={sourceTypeDropdown.map((item) => ({ key: item.label, label: item.label }))}
 					value={$updateForm.type}
 					{...$updateFormConstraints.type}
 				/>
