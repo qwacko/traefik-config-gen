@@ -8,6 +8,7 @@ const templateTypeOptions = ['router', 'service'] as const;
 
 const templateReturn = z.object({
 	id: z.string().cuid(),
+	identifier: z.string().nullable(),
 	title: z.string(),
 	template: z.string(),
 	exampleData: z.string().nullable(),
@@ -49,6 +50,8 @@ export const templateRouter = t.router({
 				...item,
 				type: 'service' as const
 			}));
+
+			console.log('First Router Template', routerTemplates[0]);
 
 			return { routerTemplates, serviceTemplates };
 		}),

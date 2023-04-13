@@ -46,6 +46,7 @@ model AuthKey {
 
 model RouterTemplate {
   id             String   @id @unique @default(cuid())
+  identifier     String?  @unique
   title          String   @unique
   template       String
   exampleData    String?
@@ -60,6 +61,7 @@ model RouterTemplate {
 
 model ServiceTemplate {
   id             String   @id @unique @default(cuid())
+  identifier     String?  @unique
   title          String   @unique
   template       String
   exampleData    String?
@@ -78,9 +80,12 @@ model Source {
   type                     String
   address                  String
   autoDelete               Boolean           @default(false)
+  autoUpdate               Boolean           @default(false)
   enabled                  Boolean           @default(true)
   parameters               Parameter[]
   lastRefresh              DateTime?
+  lastRefreshData          String?
+  lastRefreshErrors        String?
   defaultRouter            RouterTemplate?   @relation(fields: [defaultRouterTemplateId], references: [id])
   defaultRouterTemplateId  String?
   defaultService           ServiceTemplate?  @relation(fields: [defaultServiceTemplateId], references: [id])
@@ -97,7 +102,7 @@ model Source {
 model Host {
   id                String           @id @unique @default(cuid())
   title             String           @unique
-  identifier        String
+  identifier        String?          @unique
   parameters        Parameter[]
   lastSeen          DateTime
   errors            String?
