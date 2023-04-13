@@ -51,7 +51,6 @@ dependencies:
   '@trpc/client': 10.19.1_@trpc+server@10.19.1
   '@trpc/server': 10.19.1
   delay: 5.0.0
-  diff: 5.1.0
   dotenv: 16.0.3
   handlebars: 4.7.7
   lucia-auth: 1.0.0
@@ -73,6 +72,7 @@ devDependencies:
   '@typescript-eslint/eslint-plugin': 5.58.0_gjoxkwycl3ml7yxlw3iuo7gyna
   '@typescript-eslint/parser': 5.58.0_voubu7prgxjfsfbgx5d4sqnwiy
   autoprefixer: 10.4.14_postcss@8.4.21
+  diff: 5.1.0
   eslint: 8.38.0
   eslint-config-prettier: 8.8.0_eslint@8.38.0
   eslint-plugin-svelte3: 4.0.0_a4ckjr7darsrglbip3svgxgxc4
@@ -1140,7 +1140,7 @@ packages:
   /diff/5.1.0:
     resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
     engines: {node: '>=0.3.1'}
-    dev: false
+    dev: true
 
   /dir-glob/3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}

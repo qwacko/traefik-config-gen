@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DisplayDifferences from '$lib/components/DisplayDifferences.svelte';
+	import DisplayObjectDifferences from '$lib/components/DisplayObjectDifferences.svelte';
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import Row from '$lib/components/Row.svelte';
 	import Space from '$lib/components/Space.svelte';
@@ -23,10 +24,14 @@
 	title="Differences {data.differences.length === 1 ? '( None )' : '( Present )'}"
 	size="xl"
 >
-	{#if data.differences}
-		<DisplayDifferences input={data.differences} />
-	{:else}
-		<p>No differences</p>
+	{#if data.latest}
+		<DisplayObjectDifferences
+			previous={JSON.parse(data.latest.output)}
+			current={data.generatedOutput}
+			compact={true}
+		>
+			<p>No Differences</p>
+		</DisplayObjectDifferences>
 	{/if}
 	<svelte:fragment slot="footer">
 		<form method="post" action="?/update" use:enhance>

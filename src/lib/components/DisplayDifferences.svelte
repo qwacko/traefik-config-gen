@@ -2,7 +2,7 @@
 	import type { Change } from 'diff';
 
 	export let input: Change[] | undefined;
-	export let compact: boolean = false;
+	export let compact: boolean = true;
 
 	let expanded = compact;
 </script>
