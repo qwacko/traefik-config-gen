@@ -46,7 +46,7 @@
 					{...$updateFormConstraints.sourceId}
 				>
 					<svelte:fragment slot="button">
-						<a href="/sources/edit/{data.host.sourceId}" class="btn variant-ghost-tertiary">
+						<a href="/sources/{data.host.sourceId}/edit" class="btn variant-ghost-tertiary">
 							<EditIcon />
 						</a>
 					</svelte:fragment>
@@ -62,7 +62,7 @@
 				>
 					<svelte:fragment slot="button">
 						<a
-							href="/templates/edit/{data.host.routerTemplateId}"
+							href="/templates/{data.host.routerTemplateId}/edit"
 							class="btn variant-ghost-tertiary"
 						>
 							<EditIcon />
@@ -80,7 +80,7 @@
 				>
 					<svelte:fragment slot="button">
 						<a
-							href="/templates/edit/{data.host.serviceTemplateId}"
+							href="/templates/{data.host.serviceTemplateId}/edit"
 							class="btn variant-ghost-tertiary"
 						>
 							<EditIcon />

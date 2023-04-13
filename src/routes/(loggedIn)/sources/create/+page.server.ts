@@ -24,6 +24,6 @@ export const actions = {
 		} catch {
 			return fail(400, { form: { ...form, message: 'Error Creating Source' } });
 		}
-		throw redirect(302, `/sources/edit/${newSource.id}`);
+		throw redirect(302, `/sources/${newSource.id}/edit`);
 	}
 };

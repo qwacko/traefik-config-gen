@@ -24,6 +24,6 @@ export const actions = {
 		} catch {
 			return fail(400, { form: { ...form, message: 'Error Creating Router Template' } });
 		}
-		throw redirect(302, `/templates/edit/${newSource.id}`);
+		throw redirect(302, `/templates/${newSource.id}/edit`);
 	}
 };

@@ -67,7 +67,7 @@
 					{#if data.template._count.Host === 0 && data.template._count.Source === 0}
 						<a
 							role="button"
-							href="/templates/delete/{$updateForm.id}"
+							href="/templates/{$updateForm.id}/delete"
 							class="btn variant-filled-error"
 						>
 							Delete Template

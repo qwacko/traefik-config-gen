@@ -74,7 +74,7 @@
 					{#if data.source._count.Host === 0}
 						<a
 							role="button"
-							href="/sources/delete/{$updateForm.id}"
+							href="/sources/{$updateForm.id}/delete"
 							class="btn variant-filled-error"
 						>
 							Delete Source

@@ -13,7 +13,7 @@
 		<Stack>Data Goes Here</Stack>
 		<svelte:fragment slot="footer">
 			<Row>
-				<a role="button" href="/sources/edit/{data.source.id}" class="btn variant-ghost-primary">
+				<a role="button" href="/sources/{data.source.id}/edit" class="btn variant-ghost-primary">
 					Edit
 				</a>
 				<Space />
