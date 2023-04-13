@@ -6,6 +6,7 @@
 	import Popover from '$lib/components/Popover.svelte';
 	import GenerateIcon from '$lib/components/Icons/GenerateIcon.svelte';
 	import Row from '$lib/components/Row.svelte';
+	import HistoryIcon from '$lib/components/Icons/HistoryIcon.svelte';
 
 	export let data;
 
@@ -13,6 +14,7 @@
 	$: edit = $page.route.id === '/(loggedIn)/outputs/[id]/edit';
 	$: deletePage = $page.route.id === '/(loggedIn)/outputs/[id]/delete';
 	$: generatePage = $page.route.id === '/(loggedIn)/outputs/[id]/generate';
+	$: historyPage = $page.route.id === '/(loggedIn)/outputs/[id]/history';
 </script>
 
 <Stack alignment="center">
@@ -28,14 +30,19 @@
 			showList={true}
 			hidePopups={true}
 		/>
-		<Popover message={undefined} id="generate">
-			<a
-				href="/outputs/{data.output.id}/generate"
-				class="btn-icon {generatePage ? 'variant-filled-primary' : 'variant-ghost-secondary'}"
-			>
-				<GenerateIcon />
-			</a>
-		</Popover>
+		<a
+			href="/outputs/{data.output.id}/generate"
+			class="btn-icon {generatePage ? 'variant-filled-primary' : 'variant-ghost-secondary'}"
+		>
+			<GenerateIcon />
+		</a>
+
+		<a
+			href="/outputs/{data.output.id}/history"
+			class="btn-icon {historyPage ? 'variant-filled-primary' : 'variant-ghost-secondary'}"
+		>
+			<HistoryIcon />
+		</a>
 	</Row>
 	<div class="flex p-1" />
 	<slot />

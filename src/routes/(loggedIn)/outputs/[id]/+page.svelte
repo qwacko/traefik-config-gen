@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CenterCard from '$lib/components/CenterCard.svelte';
+	import DisplayOutputHistory from '$lib/components/DisplayOutputHistory.svelte';
 	import Row from '$lib/components/Row.svelte';
 	import Stack from '$lib/components/Stack.svelte';
 	import DisplaySources from '../DisplaySources.svelte';
@@ -48,4 +49,7 @@
 			emptyMessage="None"
 		/>
 	</Stack>
+</CenterCard>
+<CenterCard title="History (10 Latest)" size="xl">
+	<DisplayOutputHistory history={data.output.outputHistory} />
 </CenterCard>
