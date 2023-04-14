@@ -2,15 +2,32 @@
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 	import Row from '$lib/components/Row.svelte';
+	import SimpleDataDisplay from '$lib/components/SimpleDataDisplay.svelte';
 	import Space from '$lib/components/Space.svelte';
 	import Stack from '$lib/components/Stack.svelte';
 
 	export let data;
+
+	$: defaultRouterTemplate = data.routerTemplates.find(
+		(template) => template.key === data.source.defaultRouterTemplateId
+	);
+	$: defaultServiceTemplate = data.serviceTemplates.find(
+		(template) => template.key === data.source.defaultServiceTemplateId
+	);
 </script>
 
 <Stack gap="0">
 	<CenterCard title={data.source.title} size="xl">
-		<Stack>Data Goes Here</Stack>
+		<Stack>
+			<SimpleDataDisplay
+				key="Default Router Template"
+				value={defaultRouterTemplate ? defaultRouterTemplate.label : ''}
+			/>
+			<SimpleDataDisplay
+				key="Default Service Template"
+				value={defaultServiceTemplate ? defaultServiceTemplate.label : ''}
+			/>
+		</Stack>
 		<svelte:fragment slot="footer">
 			<Row>
 				<a role="button" href="/sources/{data.source.id}/edit" class="btn variant-ghost-primary">

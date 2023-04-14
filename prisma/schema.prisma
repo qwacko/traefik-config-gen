@@ -86,10 +86,11 @@ model Source {
   lastRefresh              DateTime?
   lastRefreshData          String?
   lastRefreshErrors        String?
-  defaultRouter            RouterTemplate?   @relation(fields: [defaultRouterTemplateId], references: [id])
-  defaultRouterTemplateId  String?
-  defaultService           ServiceTemplate?  @relation(fields: [defaultServiceTemplateId], references: [id])
-  defaultServiceTemplateId String?
+  lastRefreshErrorsDate    DateTime?
+  defaultRouter            RouterTemplate    @relation(fields: [defaultRouterTemplateId], references: [id])
+  defaultRouterTemplateId  String
+  defaultService           ServiceTemplate   @relation(fields: [defaultServiceTemplateId], references: [id])
+  defaultServiceTemplateId String
   ownedServiceTemplates    ServiceTemplate[] @relation(name: "sourceServiceTemplates")
   ownedRouterTemplates     RouterTemplate[]  @relation(name: "sourceRouterTemplates")
   Host                     Host[]

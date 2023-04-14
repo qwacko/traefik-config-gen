@@ -66,6 +66,23 @@
 					value={$updateForm.type}
 					{...$updateFormConstraints.type}
 				/>
+				<Select
+					name="defaultRouterTemplateId"
+					title="Default Router Template"
+					errorMessage={$updateFormErrors.defaultRouterTemplateId}
+					options={data.routerTemplates}
+					value={$updateForm.defaultRouterTemplateId}
+					{...$updateFormConstraints.defaultRouterTemplateId}
+				/>
+				<Select
+					name="defaultServiceTemplateId"
+					title="Default Service Template"
+					errorMessage={$updateFormErrors.defaultServiceTemplateId}
+					options={data.serviceTemplates}
+					value={$updateForm.defaultServiceTemplateId}
+					{...$updateFormConstraints.defaultServiceTemplateId}
+				/>
+
 				<ErrorText message={$updateFormMessage} />
 			</Stack>
 			<svelte:fragment slot="footer">
@@ -122,10 +139,16 @@
 	</CenterCard>
 	{#if data.source.type === 'YAML'}
 		<CenterCard title="YAML" size="xl">
-			<form method="post" action="?/refresh">
-				<input type="hidden" name="id" bind:value={$updateForm.id} />
-				<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
-			</form>
+			<Stack>
+				<ErrorText message={data.source.lastRefreshErrors} />
+				<Row>
+					<Space />
+					<form method="post" action="?/refresh">
+						<input type="hidden" name="id" bind:value={$updateForm.id} />
+						<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
+					</form>
+				</Row>
+			</Stack>
 		</CenterCard>
 	{/if}
 </Stack>

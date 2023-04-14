@@ -13,6 +13,7 @@ specifiers:
   '@trpc/client': ^10.19.1
   '@trpc/server': ^10.19.1
   '@types/diff': ^5.0.3
+  '@types/lodash': ^4.14.192
   '@types/ws': ^8.5.4
   '@typescript-eslint/eslint-plugin': ^5.58.0
   '@typescript-eslint/parser': ^5.58.0
@@ -25,6 +26,7 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   eslint-plugin-svelte3: ^4.0.0
   handlebars: ^4.7.7
+  lodash: ^4.17.21
   lucia-auth: ^1.0.0
   postcss: ^8.4.21
   postcss-load-config: ^4.0.1
@@ -55,6 +57,7 @@ dependencies:
   delay: 5.0.0
   dotenv: 16.0.3
   handlebars: 4.7.7
+  lodash: 4.17.21
   lucia-auth: 1.0.0
   prisma: 4.12.0
   sveltekit-superforms: 0.6.14_zwkw2sczzzwybnoon3g7piblzu
@@ -70,6 +73,7 @@ devDependencies:
   '@sveltejs/kit': 1.15.2_svelte@3.58.0+vite@4.2.1
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
   '@types/diff': 5.0.3
+  '@types/lodash': 4.14.192
   '@types/ws': 8.5.4
   '@typescript-eslint/eslint-plugin': 5.58.0_gjoxkwycl3ml7yxlw3iuo7gyna
   '@typescript-eslint/parser': 5.58.0_voubu7prgxjfsfbgx5d4sqnwiy
@@ -640,6 +644,10 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
+
+  /@types/lodash/4.14.192:
+    resolution: {integrity: sha512-km+Vyn3BYm5ytMO13k9KTp27O75rbQ0NFw+U//g+PX7VZyjCioXaRFisqSIJRECljcTv73G3i6BpglNGHgUQ5A==}
     dev: true
 
   /@types/node/18.15.11:
@@ -1729,7 +1737,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /loupe/2.3.6:
     resolution: {integrity: sha512-RaPMZKiMy8/JruncMU5Bt6na1eftNoo++R4Y+N2FrxkDVTrGvcyzFTsaGif4QTeKESheMGegbhw6iUAq+5A8zA==}

@@ -3,6 +3,7 @@
 	import Stack from '$lib/components/Stack.svelte';
 	import DisplayExample from '$lib/components/DisplayExample.svelte';
 	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
+	import SimpleDataDisplay from '$lib/components/SimpleDataDisplay.svelte';
 
 	export let data;
 
@@ -12,6 +13,8 @@
 <Stack gap="0">
 	<CenterCard title="Template Configuration" size="xl">
 		<Stack>
+			<SimpleDataDisplay key="Title" value={data.template.title} />
+			<SimpleDataDisplay key="Identifier" value={data.template.identifier} />
 			<pre>{data.template.template}</pre>
 		</Stack>
 	</CenterCard>

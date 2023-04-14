@@ -10,6 +10,12 @@ export const load = async (event) => {
 	}
 
 	const hosts = (await event.locals.trpc.hosts.getHosts()).filter((h) => h.sourceId === id);
+	const { routerTemplates, serviceTemplates } = await event.locals.trpc.templates.getAll();
 
-	return { source: currentData, hosts };
+	return {
+		source: currentData,
+		hosts,
+		routerTemplates: routerTemplates.map((item) => ({ key: item.id, label: item.title })),
+		serviceTemplates: serviceTemplates.map((item) => ({ key: item.id, label: item.title }))
+	};
 };

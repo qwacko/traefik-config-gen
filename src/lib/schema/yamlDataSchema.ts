@@ -36,7 +36,8 @@ export const yamlDataSchema = z.object({
 							return value.toString();
 						})
 				)
-				.optional(),
+				.optional()
+				.default({}),
 			routerTemplate: z.string().optional(),
 			serviceTemplate: z.string().optional()
 		})

@@ -3,6 +3,13 @@ import { z } from 'zod';
 const sourceTypeOptions = ['Docker', 'Manual', 'YAML', 'Other'] as const;
 type sourceTypeOptionsType = 'Docker' | 'Manual' | 'YAML' | 'Other';
 
+const validateSourceTypeOptions = (val: string): sourceTypeOptionsType => {
+	if (sourceTypeOptions.includes(val as sourceTypeOptionsType)) {
+		return val as sourceTypeOptionsType;
+	}
+	return 'Other';
+};
+
 export type sourceTypeDropdownType = { key: sourceTypeOptionsType; label: string }[];
 export const sourceTypeDropdown: sourceTypeDropdownType = [
 	{ key: 'Docker', label: 'Docker' },
@@ -33,8 +40,8 @@ export const sourceAddValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(true),
-	defaultRouterTemplateId: z.string().cuid().optional(),
-	defaultServiceTemplateId: z.string().cuid().optional()
+	defaultRouterTemplateId: z.string().cuid(),
+	defaultServiceTemplateId: z.string().cuid()
 });
 
 export type sourceAddValidationType = typeof sourceAddValidation;
@@ -62,8 +69,8 @@ export const sourceUpdateValidation = z.object({
 		.or(z.boolean())
 		.optional()
 		.default(true),
-	defaultRouterTemplateId: z.string().cuid().optional().nullable(),
-	defaultServiceTemplateId: z.string().cuid().optional().nullable()
+	defaultRouterTemplateId: z.string().cuid().optional(),
+	defaultServiceTemplateId: z.string().cuid().optional()
 });
 
 export type sourceUpdateValidationType = typeof sourceUpdateValidation;
@@ -71,7 +78,7 @@ export type sourceUpdateValidationType = typeof sourceUpdateValidation;
 export const sourceGetOutputValidationSingle = z.object({
 	id: z.string().cuid(),
 	title: z.string(),
-	type: z.enum(sourceTypeOptions),
+	type: z.string().transform(validateSourceTypeOptions),
 	address: z.string(),
 	autoDelete: z.boolean(),
 	autoUpdate: z.boolean(),
@@ -80,9 +87,12 @@ export const sourceGetOutputValidationSingle = z.object({
 		.array(z.object({ id: z.string().cuid(), label: z.string(), value: z.string() }))
 		.optional()
 		.nullable(),
-	defaultRouterTemplateId: z.string().cuid().optional().nullable(),
-	defaultServiceTemplateId: z.string().cuid().optional().nullable(),
-	lastUpdated: z.date().optional().nullable(),
+	defaultRouterTemplateId: z.string().cuid(),
+	defaultServiceTemplateId: z.string().cuid(),
+	lastRefresh: z.date().nullable(),
+	lastRefreshData: z.string().nullable(),
+	lastRefreshErrors: z.string().nullable(),
+	lastRefreshErrorsDate: z.date().nullable(),
 	_count: z.object({ Host: z.number() })
 });
 
