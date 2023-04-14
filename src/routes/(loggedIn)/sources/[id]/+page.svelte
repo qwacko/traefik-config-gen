@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
+	import DisplayTemplateList from '$lib/components/DisplayTemplateList.svelte';
 	import Row from '$lib/components/Row.svelte';
 	import SimpleDataDisplay from '$lib/components/SimpleDataDisplay.svelte';
 	import Space from '$lib/components/Space.svelte';
@@ -54,5 +55,11 @@
 	</CenterCard>
 	<CenterCard size="xl" title="Hosts">
 		<DisplayHostsList hosts={data.hosts} />
+	</CenterCard>
+	<CenterCard size="xl" title="Router Templates">
+		<DisplayTemplateList type="Router" templates={data.routerTemplatesComplete} />
+	</CenterCard>
+	<CenterCard size="xl" title="Service Templates">
+		<DisplayTemplateList type="Service" templates={data.serviceTemplatesComplete} />
 	</CenterCard>
 </Stack>

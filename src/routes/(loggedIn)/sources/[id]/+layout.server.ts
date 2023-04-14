@@ -16,6 +16,8 @@ export const load = async (event) => {
 		source: currentData,
 		hosts,
 		routerTemplates: routerTemplates.map((item) => ({ key: item.id, label: item.title })),
-		serviceTemplates: serviceTemplates.map((item) => ({ key: item.id, label: item.title }))
+		serviceTemplates: serviceTemplates.map((item) => ({ key: item.id, label: item.title })),
+		routerTemplatesComplete: routerTemplates.filter((item) => item.masterSourceId === id),
+		serviceTemplatesComplete: serviceTemplates.filter((item) => item.masterSourceId === id)
 	};
 };

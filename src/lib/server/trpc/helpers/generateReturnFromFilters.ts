@@ -29,6 +29,12 @@ export const generateReturnFromFilters = async ({
 
 			if (!routerOutput) return undefined;
 
+			try {
+				JSON.parse(routerOutput);
+			} catch (e) {
+				console.log('routerOutput', routerOutput);
+			}
+
 			return { [variables.TITLE.routerName]: JSON.parse(routerOutput) };
 		})
 	);

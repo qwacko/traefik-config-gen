@@ -6,20 +6,23 @@ export const upsertServiceTemplate = ({
 	prisma,
 	sourceId,
 	identifier,
-	template
+	template,
+	editable = true
 }: {
 	prisma: PrismaClient;
 	sourceId: string;
 	identifier: string;
 	template: TemplateConfig;
+	editable?: boolean;
 }) => {
 	return prisma.serviceTemplate.upsert({
 		where: {
 			identifier
 		},
-		update: template,
+		update: { ...template, editable },
 		create: {
 			...template,
+			editable,
 			masterSourceId: sourceId,
 			identifier
 		}
@@ -29,11 +32,13 @@ export const upsertServiceTemplate = ({
 export const upsertServiceTemplatesFromList = async ({
 	serviceTemplates,
 	prisma,
-	sourceId
+	sourceId,
+	editable = true
 }: {
 	serviceTemplates: Record<string, TemplateConfig>;
 	prisma: PrismaClient;
 	sourceId: string;
+	editable?: boolean;
 }) => {
 	await Promise.all(
 		Object.entries(serviceTemplates).map(async ([key, value]) => {
@@ -43,7 +48,8 @@ export const upsertServiceTemplatesFromList = async ({
 				identifier,
 				sourceId,
 				prisma: prisma,
-				template: value
+				template: value,
+				editable
 			});
 		})
 	);
@@ -61,20 +67,23 @@ export const upsertRouterTemplate = ({
 	prisma,
 	sourceId,
 	identifier,
-	template
+	template,
+	editable = true
 }: {
 	prisma: PrismaClient;
 	sourceId: string;
 	identifier: string;
 	template: TemplateConfig;
+	editable?: boolean;
 }) => {
 	return prisma.routerTemplate.upsert({
 		where: {
 			identifier
 		},
-		update: template,
+		update: { ...template, editable },
 		create: {
 			...template,
+			editable,
 			masterSourceId: sourceId,
 			identifier
 		}
@@ -84,11 +93,13 @@ export const upsertRouterTemplate = ({
 export const upsertRouterTemplatesFromList = async ({
 	routerTemplates,
 	prisma,
-	sourceId
+	sourceId,
+	editable = true
 }: {
 	routerTemplates: Record<string, TemplateConfig>;
 	prisma: PrismaClient;
 	sourceId: string;
+	editable?: boolean;
 }) => {
 	await Promise.all(
 		Object.entries(routerTemplates).map(async ([key, value]) => {
@@ -100,7 +111,8 @@ export const upsertRouterTemplatesFromList = async ({
 				identifier,
 				sourceId,
 				prisma: prisma,
-				template: value
+				template: value,
+				editable
 			});
 		})
 	);

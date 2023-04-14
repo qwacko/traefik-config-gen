@@ -11,7 +11,7 @@ import { t } from '../t';
 
 export const hostRouter = t.router({
 	getHosts: t.procedure.query(async ({ ctx }) => {
-		const hosts = await ctx.prisma.host.findMany({ include: { parameters: true } });
+		const hosts = await ctx.prisma.host.findMany({ include: { parameters: true, source: true } });
 		return hosts;
 	}),
 	get: t.procedure.input(z.object({ id: z.string().cuid() })).query(async ({ ctx, input }) => {
@@ -35,14 +35,13 @@ export const hostRouter = t.router({
 		return host;
 	}),
 	update: t.procedure.input(hostUpdateValidation).mutation(async ({ ctx, input }) => {
-		console.log('inputData', input);
-		const host = await ctx.prisma.host.update({ where: { id: input.id }, data: input });
-		return host;
+		await ctx.prisma.host.updateMany({ where: { id: input.id, editable: true }, data: input });
+		return true;
 	}),
 	delete: t.procedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.prisma.host.delete({ where: { id: input.id } });
+			await ctx.prisma.host.deleteMany({ where: { id: input.id, editable: true } });
 			return true;
 		}),
 	parameters: t.router({

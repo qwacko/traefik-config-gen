@@ -4,8 +4,10 @@ export const load = async (event) => {
 	const parentData = await event.parent();
 	const currentData = parentData.template;
 
-	if (!currentData || currentData._count.Host > 0 || currentData._count.Source > 0) {
-		throw redirect(302, `/templates`);
+	if (!currentData) throw redirect(302, `/templates`);
+
+	if (currentData._count.Host > 0 || currentData._count.Source > 0 || !currentData.editable) {
+		throw redirect(302, `/templates/${currentData.id}`);
 	}
 };
 

@@ -14,7 +14,7 @@ export type hostAddValidationType = typeof hostAddValidation;
 export const hostUpdateValidation = z.object({
 	id: z.string().cuid(),
 	title: z.string().optional(),
-	identifier: z.string().optional(),
+	identifier: z.string().optional().nullable(),
 	lastSeen: z.date().optional(),
 	sourceId: z.string().cuid().optional(),
 	routerTemplateId: z.string().cuid().optional().nullable(),

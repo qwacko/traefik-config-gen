@@ -138,7 +138,14 @@ export const outputRouter = t.router({
 			]
 		};
 
-		return generateReturnFromFilters({ filters: whereFilter, prisma: ctx.prisma });
+		try {
+			console.log('Trying to generate output');
+			const data = await generateReturnFromFilters({ filters: whereFilter, prisma: ctx.prisma });
+			return data;
+		} catch (e) {
+			console.log("Couldn't generate output", e);
+			return { message: 'Error generating output' };
+		}
 	}),
 	getOutput: t.procedure
 		.use(authMiddleware)

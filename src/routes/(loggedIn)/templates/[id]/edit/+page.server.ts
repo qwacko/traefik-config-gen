@@ -7,8 +7,12 @@ export const load = async (event) => {
 	const parentData = await event.parent();
 	const currentData = parentData.template;
 
-	if (!currentData || !currentData.editable) {
+	if (!currentData) {
 		throw redirect(302, '/templates');
+	}
+
+	if (!currentData.editable) {
+		throw redirect(302, `/templates/${currentData.id}`);
 	}
 
 	const formValues = {
@@ -49,6 +53,7 @@ export const actions = {
 		}
 		return { updateForm };
 	},
+
 	updateExample: async (event) => {
 		const updateExampleForm = await superValidate(event, updateTempateSchema, {
 			id: updateExampleFormId

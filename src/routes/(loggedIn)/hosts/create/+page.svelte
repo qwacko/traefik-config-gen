@@ -36,7 +36,9 @@
 				title="Source"
 				errorMessage={$errors.sourceId}
 				name="sourceId"
-				options={data.sources.map((item) => ({ key: item.id, label: item.title }))}
+				options={data.sources
+					.filter((item) => item.type !== 'YAML')
+					.map((item) => ({ key: item.id, label: item.title }))}
 				value={$form.sourceId}
 				{...$constraints.sourceId}
 			/>
@@ -44,10 +46,12 @@
 				title="Router Template"
 				errorMessage={$errors.routerTemplateId}
 				name="routerTemplateId"
-				options={data.templates.routerTemplates.map((item) => ({
-					key: item.id,
-					label: item.title
-				}))}
+				options={data.templates.routerTemplates
+					.filter((item) => (item.masterSource ? item.masterSource.type !== 'YAML' : true))
+					.map((item) => ({
+						key: item.id,
+						label: item.title
+					}))}
 				value={$form.routerTemplateId}
 				{...$constraints.routerTemplateId}
 			/>
@@ -55,10 +59,12 @@
 				title="Service Template"
 				errorMessage={$errors.serviceTemplateId}
 				name="serviceTemplateId"
-				options={data.templates.serviceTemplates.map((item) => ({
-					key: item.id,
-					label: item.title
-				}))}
+				options={data.templates.serviceTemplates
+					.filter((item) => (item.masterSource ? item.masterSource.type !== 'YAML' : true))
+					.map((item) => ({
+						key: item.id,
+						label: item.title
+					}))}
 				value={$form.serviceTemplateId}
 				{...$constraints.serviceTemplateId}
 			/>

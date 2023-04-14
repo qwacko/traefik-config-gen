@@ -36,9 +36,7 @@
 					/>
 				</Row>
 			{/each}
+			<a href="/sources/create" class="btn variant-filled-primary">New Source</a>
 		</Stack>
 	</CenterCard>
-	<Center>
-		<a href="/sources/create" class="btn variant-filled-primary">New Source</a>
-	</Center>
 </Stack>

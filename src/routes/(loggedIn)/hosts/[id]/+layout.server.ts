@@ -11,14 +11,20 @@ export const load = async (event) => {
 
 	if (!currentData) throw redirect(302, '/hosts');
 
-	const sources = (await sourcesRaw).map((source) => ({ key: source.id, label: source.title }));
+	const sources = (await sourcesRaw).map((source) => ({
+		key: source.id,
+		label: source.title,
+		sourceType: source.type
+	}));
 	const routerTemplates = (await templatesRaw).routerTemplates.map((template) => ({
 		key: template.id,
-		label: template.title
+		label: template.title,
+		sourceType: template.masterSource ? template.masterSource.type : undefined
 	}));
 	const serviceTemplates = (await templatesRaw).serviceTemplates.map((template) => ({
 		key: template.id,
-		label: template.title
+		label: template.title,
+		sourceType: template.masterSource ? template.masterSource.type : undefined
 	}));
 
 	return { host: currentData, sources, routerTemplates, serviceTemplates };

@@ -23,6 +23,8 @@
 		deleteHighlighted={deletePage}
 		showList={true}
 		hidePopups={true}
+		hideEdit={!data.host.editable}
+		hideDelete={!data.host.editable}
 	/>
 	<div class="flex p-1" />
 	<slot />

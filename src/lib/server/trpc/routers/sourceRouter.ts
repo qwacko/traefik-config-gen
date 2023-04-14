@@ -88,7 +88,8 @@ export const sourceRouter = t.router({
 						await upsertRouterTemplatesFromList({
 							prisma: ctx.prisma,
 							sourceId: source.id,
-							routerTemplates: data.routerTemplate
+							routerTemplates: data.routerTemplate,
+							editable: false
 						});
 					} catch (e) {
 						console.log(e);
@@ -101,7 +102,8 @@ export const sourceRouter = t.router({
 						await upsertServiceTemplatesFromList({
 							prisma: ctx.prisma,
 							sourceId: source.id,
-							serviceTemplates: data.serviceTemplate
+							serviceTemplates: data.serviceTemplate,
+							editable: false
 						});
 					} catch (e) {
 						console.log(e);
@@ -116,7 +118,8 @@ export const sourceRouter = t.router({
 						await upsertHostsFromList({
 							prisma: ctx.prisma,
 							source,
-							hosts: data.hosts
+							hosts: data.hosts,
+							editable: false
 						});
 					} catch (e) {
 						console.log(e);

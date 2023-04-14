@@ -41,14 +41,6 @@
 				<p>No Parameters Configured</p>
 			{/if}
 		</Stack>
-
-		<svelte:fragment slot="footer">
-			<Row>
-				<a href="/hosts/{data.host.id}/edit" class="btn variant-filled-primary">Edit Host</a>
-				<Space />
-				<a href="/hosts" class="btn variant-ghost-primary">Return</a>
-			</Row>
-		</svelte:fragment>
 	</CenterCard>
 	<DisplayHostOutput host={data.host} />
 </Stack>

@@ -11,12 +11,14 @@ export const upsertHost = async ({
 	prisma,
 	identifier,
 	source,
-	configuration
+	configuration,
+	editable
 }: {
 	prisma: PrismaClient;
 	identifier: string;
 	source: Source;
 	configuration: ConfigurationType;
+	editable?: boolean;
 }) => {
 	const routerTemplate = await prisma.routerTemplate.findFirst({
 		where: {
@@ -44,6 +46,7 @@ export const upsertHost = async ({
 	const updateHost = {
 		title: configuration.title,
 		lastSeen: new Date(),
+		editable,
 		service: {
 			connect: {
 				id: serviceTemplateId
@@ -67,6 +70,7 @@ export const upsertHost = async ({
 	const newHostCreation = {
 		...updateHost,
 		identifier,
+		editable,
 		source: { connect: { id: source.id } }
 	} satisfies Prisma.HostCreateInput;
 
@@ -75,29 +79,24 @@ export const upsertHost = async ({
 		include: { parameters: true, router: true, source: true, service: true }
 	});
 
-	console.log('Host Found');
-
 	if (host) {
-		console.log('Host Found, Deleting Parameters');
-		console.log('Host Id', host.id);
-		const numDeleted = await prisma.parameter.deleteMany({ where: { hostId: host.id } });
-		console.log('Deleted Parameters', numDeleted);
+		await prisma.parameter.deleteMany({ where: { hostId: host.id } });
 		await prisma.host.update({ where: { id: host.id }, data: updateHost });
 	} else {
-		console.log('Host Not Found, Creating Host');
 		await prisma.host.create({ data: newHostCreation });
 	}
-	console.log('Completed Updating Host', { updateHost, newHostCreation });
 };
 
 export const upsertHostsFromList = async ({
 	prisma,
 	source,
-	hosts
+	hosts,
+	editable = true
 }: {
 	prisma: PrismaClient;
 	source: Source;
 	hosts: Record<string, ConfigurationType>;
+	editable?: boolean;
 }) => {
 	for (const [key, value] of Object.entries(hosts)) {
 		const identifier = `${source.id}-${key}`;
@@ -108,7 +107,8 @@ export const upsertHostsFromList = async ({
 			identifier,
 			source,
 			prisma: prisma,
-			configuration: value
+			configuration: value,
+			editable
 		});
 	}
 

@@ -1,29 +1,44 @@
 <script lang="ts">
-	import type { Host, Parameter } from '@prisma/client';
+	import type { Host, Parameter, Source } from '@prisma/client';
 	import ActionButtons from './ActionButtons.svelte';
 	import Row from './Row.svelte';
 	import Space from './Space.svelte';
 	import Stack from './Stack.svelte';
+	import SourceBadge from './SourceBadge.svelte';
 
 	export let hosts: (Host & {
 		parameters: Parameter[];
+		source: Source;
 	})[] = [];
 </script>
 
 <Stack>
-	{#each hosts as host}
-		<Row>
-			<Stack gap="0">
-				<h5>{host.title}</h5>
-				{#each host.parameters as parameter}
+	{#if hosts.length === 0}
+		<p>No Hosts Found.</p>
+	{:else}
+		{#each hosts as host}
+			<Row>
+				<Stack gap="0">
 					<Row>
-						<p class="font-bold">{parameter.label} :</p>
-						<p>{parameter.value}</p>
+						<h5>{host.title}</h5>
+						<SourceBadge source={host.source} />
 					</Row>
-				{/each}
-			</Stack>
-			<Space />
-			<ActionButtons title={host.title} id={host.id} urlPrefix="hosts" />
-		</Row>
-	{/each}
+					{#each host.parameters as parameter}
+						<Row>
+							<p class="font-bold">{parameter.label} :</p>
+							<p>{parameter.value}</p>
+						</Row>
+					{/each}
+				</Stack>
+				<Space />
+				<ActionButtons
+					title={host.title}
+					id={host.id}
+					urlPrefix="hosts"
+					hideDelete={!host.editable}
+					hideEdit={!host.editable}
+				/>
+			</Row>
+		{/each}
+	{/if}
 </Stack>

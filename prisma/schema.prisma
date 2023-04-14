@@ -105,6 +105,7 @@ model Host {
   title             String           @unique
   identifier        String?          @unique
   parameters        Parameter[]
+  editable          Boolean          @default(true)
   lastSeen          DateTime
   errors            String?
   source            Source           @relation(fields: [sourceId], references: [id])

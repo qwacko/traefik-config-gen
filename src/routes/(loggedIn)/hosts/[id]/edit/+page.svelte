@@ -41,7 +41,7 @@
 					title="Source"
 					errorMessage={$updateFormErrors.sourceId}
 					name="sourceId"
-					options={data.sources}
+					options={data.sources.filter((item) => item.sourceType !== 'YAML')}
 					value={$updateForm.sourceId}
 					{...$updateFormConstraints.sourceId}
 				>
@@ -56,7 +56,7 @@
 					title="Router Template"
 					errorMessage={$updateFormErrors.routerTemplateId}
 					name="routerTemplateId"
-					options={data.routerTemplates}
+					options={data.routerTemplates.filter((item) => item.sourceType !== 'YAML')}
 					bind:value={$updateForm.routerTemplateId}
 					{...$updateFormConstraints.routerTemplateId}
 				>
@@ -74,7 +74,7 @@
 					title="Service Template"
 					errorMessage={$updateFormErrors.serviceTemplateId}
 					name="serviceTemplateId"
-					options={data.serviceTemplates}
+					options={data.serviceTemplates.filter((item) => item.sourceType !== 'YAML')}
 					bind:value={$updateForm.serviceTemplateId}
 					{...$updateFormConstraints.serviceTemplateId}
 				>

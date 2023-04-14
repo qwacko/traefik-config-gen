@@ -17,7 +17,11 @@ const templateReturn = z.object({
 	editable: z.boolean(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
-	_count: z.object({ Host: z.number(), Source: z.number() })
+	_count: z.object({ Host: z.number(), Source: z.number() }),
+	masterSource: z
+		.object({ id: z.string(), type: z.string(), title: z.string() })
+		.optional()
+		.nullable()
 });
 
 export type TemplateReturnType = z.infer<typeof templateReturn>;
@@ -35,7 +39,7 @@ export const templateRouter = t.router({
 			const routerTemplates = (
 				await ctx.prisma.routerTemplate.findMany({
 					orderBy: { title: 'asc' },
-					include: { _count: { select: { Host: true, Source: true } } }
+					include: { _count: { select: { Host: true, Source: true } }, masterSource: true }
 				})
 			).map((item) => ({
 				...item,
@@ -44,7 +48,7 @@ export const templateRouter = t.router({
 			const serviceTemplates = (
 				await ctx.prisma.serviceTemplate.findMany({
 					orderBy: { title: 'asc' },
-					include: { _count: { select: { Host: true, Source: true } } }
+					include: { _count: { select: { Host: true, Source: true } }, masterSource: true }
 				})
 			).map((item) => ({
 				...item,
@@ -61,7 +65,7 @@ export const templateRouter = t.router({
 		.query(async ({ ctx, input }) => {
 			const routerTemplate = await ctx.prisma.routerTemplate.findUnique({
 				where: { id: input.id },
-				include: { _count: { select: { Host: true, Source: true } } }
+				include: { _count: { select: { Host: true, Source: true } }, masterSource: true }
 			});
 
 			if (routerTemplate) {
@@ -70,7 +74,7 @@ export const templateRouter = t.router({
 
 			const serviceTemplate = await ctx.prisma.serviceTemplate.findUnique({
 				where: { id: input.id },
-				include: { _count: { select: { Host: true, Source: true } } }
+				include: { _count: { select: { Host: true, Source: true } }, masterSource: true }
 			});
 
 			if (serviceTemplate) {
@@ -110,9 +114,9 @@ export const templateRouter = t.router({
 
 			if (!targetRouter && !targetService) {
 				throw new TRPCError({ message: 'Cannot find id', code: 'BAD_REQUEST' });
-			} else if (targetRouter) {
+			} else if (targetRouter && targetRouter.editable) {
 				await ctx.prisma.routerTemplate.update({ where: { id }, data });
-			} else {
+			} else if (targetService && targetService.editable) {
 				await ctx.prisma.serviceTemplate.update({ where: { id }, data });
 			}
 			return true;
@@ -131,12 +135,22 @@ export const templateRouter = t.router({
 			});
 
 			// Make sure that the template is not in use
-			if (targetRouter && targetRouter._count.Host === 0 && targetRouter._count.Source === 0) {
+			if (
+				targetRouter &&
+				targetRouter._count.Host === 0 &&
+				targetRouter._count.Source === 0 &&
+				targetRouter.editable
+			) {
 				await ctx.prisma.routerTemplate.deleteMany({ where: { id: input.id } });
 			}
 
 			// Make sure that the template is not in use
-			if (targetService && targetService._count.Host === 0 && targetService._count.Source === 0) {
+			if (
+				targetService &&
+				targetService._count.Host === 0 &&
+				targetService._count.Source === 0 &&
+				targetService.editable
+			) {
 				await ctx.prisma.serviceTemplate.deleteMany({ where: { id: input.id } });
 			}
 		})

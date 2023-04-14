@@ -15,6 +15,7 @@ export const load = async (event) => {
 	const currentData = data.host;
 
 	if (!currentData) throw redirect(302, `/hosts`);
+	if (!currentData.editable) throw redirect(302, `/hosts/${currentData.id}`);
 
 	const formData = {
 		id: currentData.id,

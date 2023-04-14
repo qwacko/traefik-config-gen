@@ -48,6 +48,22 @@
 				bind:value={$form.type}
 				{...$constraints.type}
 			/>
+			<Select
+				name="defaultRouterTemplateId"
+				title="Default Router Template (Required)"
+				errorMessage={$errors.defaultRouterTemplateId}
+				options={data.routerTemplates}
+				bind:value={$form.defaultRouterTemplateId}
+				{...$constraints.defaultRouterTemplateId}
+			/>
+			<Select
+				name="defaultServiceTemplateId"
+				title="Default Service Template (Required)"
+				errorMessage={$errors.defaultServiceTemplateId}
+				options={data.serviceTemplates}
+				bind:value={$form.defaultServiceTemplateId}
+				{...$constraints.defaultServiceTemplateId}
+			/>
 			<ErrorText message={$message} />
 		</Stack>
 		<svelte:fragment slot="footer">

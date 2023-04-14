@@ -24,7 +24,9 @@
 	title="Differences {data.differences.length === 1 ? '( None )' : '( Present )'}"
 	size="xl"
 >
-	{#if data.latest}
+	{#if 'message' in data.generatedOutput}
+		<ErrorText message={data.generatedOutput.message} />
+	{:else if data.latest}
 		<DisplayObjectDifferences
 			previous={JSON.parse(data.latest.output)}
 			current={data.generatedOutput}
@@ -34,29 +36,31 @@
 		</DisplayObjectDifferences>
 	{/if}
 	<svelte:fragment slot="footer">
-		<form method="post" action="?/update" use:enhance>
-			<Stack>
-				<Row alignment="bottom">
-					<input type="hidden" name="outputId" value={data.output.id} />
-					<input
-						type="hidden"
-						name="outputText"
-						value={JSON.stringify(data.generatedOutput, undefined, 2)}
-					/>
-					<TextInput
-						label="Change Title"
-						name="changeTitle"
-						title="Change Title"
-						bind:value={$form.changeTitle}
-						errorMessage={$errors.changeTitle}
-						{...$constraints.changeTitle}
-					/>
-					<Space />
-					<button type="submit" class="btn variant-filled-primary">Update</button>
-				</Row>
-				<ErrorText message={$message} />
-			</Stack>
-		</form>
+		{#if !('message' in data.generatedOutput)}
+			<form method="post" action="?/update" use:enhance>
+				<Stack>
+					<Row alignment="bottom">
+						<input type="hidden" name="outputId" value={data.output.id} />
+						<input
+							type="hidden"
+							name="outputText"
+							value={JSON.stringify(data.generatedOutput, undefined, 2)}
+						/>
+						<TextInput
+							label="Change Title"
+							name="changeTitle"
+							title="Change Title"
+							bind:value={$form.changeTitle}
+							errorMessage={$errors.changeTitle}
+							{...$constraints.changeTitle}
+						/>
+						<Space />
+						<button type="submit" class="btn variant-filled-primary">Update</button>
+					</Row>
+					<ErrorText message={$message} />
+				</Stack>
+			</form>
+		{/if}
 	</svelte:fragment>
 </CenterCard>
 
