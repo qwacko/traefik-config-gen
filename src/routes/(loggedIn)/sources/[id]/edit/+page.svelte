@@ -13,6 +13,7 @@
 	} from '$lib/schema/sourceSchema';
 	import { superForm } from 'sveltekit-superforms/client';
 	import ParameterSettings from '$lib/components/ParameterSettings.svelte';
+	import SimpleDataDisplay from '$lib/components/SimpleDataDisplay.svelte';
 
 	export let data;
 
@@ -38,6 +39,24 @@
 </script>
 
 <Stack gap="0" alignment="center">
+	{#if data.source.type === 'YAML'}
+		<CenterCard title="Refresh" size="xl">
+			<Stack>
+				<SimpleDataDisplay
+					key="Last Refresh"
+					value={data.source.lastRefresh?.toLocaleString() || 'None'}
+				/>
+				<ErrorText message={data.source.lastRefreshErrors} />
+				<Row>
+					<Space />
+					<form method="post" action="?/refresh">
+						<input type="hidden" name="id" bind:value={$updateForm.id} />
+						<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
+					</form>
+				</Row>
+			</Stack>
+		</CenterCard>
+	{/if}
 	<form method="post" use:updateFormEnhance action="?/update">
 		<CenterCard title="Edit Source" size="xl">
 			<Stack>
@@ -137,18 +156,4 @@
 			{#if $addParameterFormMessage}<ErrorText message={$addParameterFormMessage} />{/if}
 		</Stack>
 	</CenterCard>
-	{#if data.source.type === 'YAML'}
-		<CenterCard title="YAML" size="xl">
-			<Stack>
-				<ErrorText message={data.source.lastRefreshErrors} />
-				<Row>
-					<Space />
-					<form method="post" action="?/refresh">
-						<input type="hidden" name="id" bind:value={$updateForm.id} />
-						<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
-					</form>
-				</Row>
-			</Stack>
-		</CenterCard>
-	{/if}
 </Stack>

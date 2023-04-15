@@ -2,6 +2,7 @@
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DisplayHostsList from '$lib/components/DisplayHostsList.svelte';
 	import DisplayTemplateList from '$lib/components/DisplayTemplateList.svelte';
+	import ErrorText from '$lib/components/ErrorText.svelte';
 	import Row from '$lib/components/Row.svelte';
 	import SimpleDataDisplay from '$lib/components/SimpleDataDisplay.svelte';
 	import Space from '$lib/components/Space.svelte';
@@ -18,6 +19,24 @@
 </script>
 
 <Stack gap="0">
+	{#if data.source.type === 'YAML'}
+		<CenterCard title="Refresh" size="xl">
+			<Stack>
+				<SimpleDataDisplay
+					key="Last Refresh"
+					value={data.source.lastRefresh?.toLocaleString() || 'None'}
+				/>
+				<ErrorText message={data.source.lastRefreshErrors} />
+				<Row>
+					<Space />
+					<form method="post" action="?/refresh">
+						<input type="hidden" name="id" bind:value={data.source.id} />
+						<input type="submit" value="Refresh" class="btn variant-ghost-primary" />
+					</form>
+				</Row>
+			</Stack>
+		</CenterCard>
+	{/if}
 	<CenterCard title={data.source.title} size="xl">
 		<Stack>
 			<SimpleDataDisplay

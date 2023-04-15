@@ -93,6 +93,13 @@ export const sourceRouter = t.router({
 						});
 					} catch (e) {
 						console.log(e);
+						await ctx.prisma.source.update({
+							where: { id: source.id },
+							data: {
+								lastRefreshErrors: 'Error Updating Router Templates',
+								lastRefreshErrorsDate: new Date()
+							}
+						});
 						throw new TRPCError({
 							code: 'BAD_REQUEST',
 							message: 'Error Updating Router Templates'
@@ -107,6 +114,13 @@ export const sourceRouter = t.router({
 						});
 					} catch (e) {
 						console.log(e);
+						await ctx.prisma.source.update({
+							where: { id: source.id },
+							data: {
+								lastRefreshErrors: 'Error Updating Service Templates',
+								lastRefreshErrorsDate: new Date()
+							}
+						});
 						throw new TRPCError({
 							code: 'BAD_REQUEST',
 							message: 'Error Updating Service Templates'
@@ -123,22 +137,30 @@ export const sourceRouter = t.router({
 						});
 					} catch (e) {
 						console.log(e);
+
+						await ctx.prisma.source.update({
+							where: { id: source.id },
+							data: {
+								lastRefreshErrors: 'Error Updating Hosts',
+								lastRefreshErrorsDate: new Date()
+							}
+						});
 						throw new TRPCError({
 							code: 'BAD_REQUEST',
 							message: 'Error Updating Hosts'
 						});
 					}
-				}
 
-				// Clear errors if there are no new ones.
-				if (error && source.lastRefreshErrors) {
 					await ctx.prisma.source.update({
 						where: { id: source.id },
-						data: { lastRefreshErrors: null, lastRefreshErrorsDate: null }
+						data: {
+							lastRefreshErrors: null,
+							lastRefreshErrorsDate: null,
+							lastRefresh: new Date(),
+							lastRefreshData: JSON.stringify(data)
+						}
 					});
 				}
-
-				console.log('Data', data);
 			}
 		}),
 	parameters: t.router({
