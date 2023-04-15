@@ -11,12 +11,7 @@ import {
 } from '$lib/schema/sourceSchema';
 import { TRPCError } from '@trpc/server';
 import { idSchema } from '$lib/schema/idSchema';
-import { loadYAML } from '../helpers/loadYAML';
-import { upsertHostsFromList } from '../helpers/upsertHost';
-import {
-	upsertRouterTemplatesFromList,
-	upsertServiceTemplatesFromList
-} from '../helpers/upsertTemplate';
+import { processYAMLUpdate } from '../helpers/processYAMLUpdate';
 
 export const sourceRouter = t.router({
 	getSource: t.procedure
@@ -75,92 +70,7 @@ export const sourceRouter = t.router({
 				throw new TRPCError({ code: 'BAD_REQUEST', message: "Manual source can't be refreshed" });
 
 			if (source.type === 'YAML') {
-				const { data, error } = await loadYAML(source.address);
-
-				if (error) {
-					await ctx.prisma.source.update({
-						where: { id: source.id },
-						data: { lastRefreshErrors: error, lastRefreshErrorsDate: new Date() }
-					});
-				} else if (data) {
-					try {
-						//Loop through all services and upsert servie templates taht exist, and remove those that dont.
-						await upsertRouterTemplatesFromList({
-							prisma: ctx.prisma,
-							sourceId: source.id,
-							routerTemplates: data.routerTemplate,
-							editable: false
-						});
-					} catch (e) {
-						console.log(e);
-						await ctx.prisma.source.update({
-							where: { id: source.id },
-							data: {
-								lastRefreshErrors: 'Error Updating Router Templates',
-								lastRefreshErrorsDate: new Date()
-							}
-						});
-						throw new TRPCError({
-							code: 'BAD_REQUEST',
-							message: 'Error Updating Router Templates'
-						});
-					}
-					try {
-						await upsertServiceTemplatesFromList({
-							prisma: ctx.prisma,
-							sourceId: source.id,
-							serviceTemplates: data.serviceTemplate,
-							editable: false
-						});
-					} catch (e) {
-						console.log(e);
-						await ctx.prisma.source.update({
-							where: { id: source.id },
-							data: {
-								lastRefreshErrors: 'Error Updating Service Templates',
-								lastRefreshErrorsDate: new Date()
-							}
-						});
-						throw new TRPCError({
-							code: 'BAD_REQUEST',
-							message: 'Error Updating Service Templates'
-						});
-					}
-
-					try {
-						// Loop through hosts and create / update / delete them
-						await upsertHostsFromList({
-							prisma: ctx.prisma,
-							source,
-							hosts: data.hosts,
-							editable: false
-						});
-					} catch (e) {
-						console.log(e);
-
-						await ctx.prisma.source.update({
-							where: { id: source.id },
-							data: {
-								lastRefreshErrors: 'Error Updating Hosts',
-								lastRefreshErrorsDate: new Date()
-							}
-						});
-						throw new TRPCError({
-							code: 'BAD_REQUEST',
-							message: 'Error Updating Hosts'
-						});
-					}
-
-					await ctx.prisma.source.update({
-						where: { id: source.id },
-						data: {
-							lastRefreshErrors: null,
-							lastRefreshErrorsDate: null,
-							lastRefresh: new Date(),
-							lastRefreshData: JSON.stringify(data)
-						}
-					});
-				}
+				await processYAMLUpdate({ prisma: ctx.prisma, source });
 			}
 		}),
 	parameters: t.router({
