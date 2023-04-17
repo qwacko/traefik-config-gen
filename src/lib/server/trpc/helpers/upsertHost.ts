@@ -32,16 +32,14 @@ export const upsertHost = async ({
 	const serviceTemplate = await prisma.serviceTemplate.findFirst({
 		where: {
 			OR: [
-				{ title: configuration.routerTemplate },
-				{ identifier: `${source.id}-${configuration.routerTemplate}` }
+				{ title: configuration.serviceTemplate },
+				{ identifier: `${source.id}-${configuration.serviceTemplate}` }
 			]
 		}
 	});
 
 	const serviceTemplateId = serviceTemplate ? serviceTemplate.id : source.defaultServiceTemplateId;
 	const routerTemplateId = routerTemplate ? routerTemplate.id : source.defaultRouterTemplateId;
-
-	console.log('Service / Router Ids', { serviceTemplateId, routerTemplateId });
 
 	const updateHost = {
 		title: configuration.title,
@@ -100,8 +98,6 @@ export const upsertHostsFromList = async ({
 }) => {
 	for (const [key, value] of Object.entries(hosts)) {
 		const identifier = `${source.id}-${key}`;
-
-		console.log('Starting Upserting Host', { key, value });
 
 		await upsertHost({
 			identifier,

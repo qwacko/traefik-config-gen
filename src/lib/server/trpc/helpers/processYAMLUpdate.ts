@@ -22,12 +22,14 @@ export const processYAMLUpdate = async ({
 	} else if (data) {
 		try {
 			//Loop through all services and upsert servie templates taht exist, and remove those that dont.
-			await upsertRouterTemplatesFromList({
-				prisma,
-				sourceId: source.id,
-				routerTemplates: data.routerTemplate,
-				editable: false
-			});
+			if (data.routerTemplate) {
+				await upsertRouterTemplatesFromList({
+					prisma,
+					sourceId: source.id,
+					routerTemplates: data.routerTemplate,
+					editable: false
+				});
+			}
 		} catch (e) {
 			console.log(e);
 			await prisma.source.update({
@@ -43,12 +45,14 @@ export const processYAMLUpdate = async ({
 			});
 		}
 		try {
-			await upsertServiceTemplatesFromList({
-				prisma,
-				sourceId: source.id,
-				serviceTemplates: data.serviceTemplate,
-				editable: false
-			});
+			if (data.serviceTemplate) {
+				await upsertServiceTemplatesFromList({
+					prisma,
+					sourceId: source.id,
+					serviceTemplates: data.serviceTemplate,
+					editable: false
+				});
+			}
 		} catch (e) {
 			console.log(e);
 			await prisma.source.update({

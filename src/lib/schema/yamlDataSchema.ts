@@ -19,8 +19,8 @@ const templateYAMLSchema = z.record(
 );
 
 export const yamlDataSchema = z.object({
-	routerTemplate: templateYAMLSchema,
-	serviceTemplate: templateYAMLSchema,
+	routerTemplate: templateYAMLSchema.optional(),
+	serviceTemplate: templateYAMLSchema.optional(),
 	hosts: z.record(
 		z.object({
 			title: z.string(),

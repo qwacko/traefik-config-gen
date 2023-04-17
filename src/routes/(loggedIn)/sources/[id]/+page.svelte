@@ -19,7 +19,7 @@
 </script>
 
 <Stack gap="0">
-	{#if data.source.type === 'YAML'}
+	{#if data.source.type === 'YAML' || data.source.type === 'Docker'}
 		<CenterCard title="Refresh" size="xl">
 			<Stack>
 				<SimpleDataDisplay

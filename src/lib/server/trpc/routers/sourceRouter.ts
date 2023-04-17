@@ -12,6 +12,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { idSchema } from '$lib/schema/idSchema';
 import { processYAMLUpdate } from '../helpers/processYAMLUpdate';
+import { processDockerUpdate } from '../helpers/processDockerUpdate';
 
 export const sourceRouter = t.router({
 	getSource: t.procedure
@@ -71,6 +72,9 @@ export const sourceRouter = t.router({
 
 			if (source.type === 'YAML') {
 				await processYAMLUpdate({ prisma: ctx.prisma, source });
+			}
+			if (source.type === 'Docker') {
+				await processDockerUpdate({ prisma: ctx.prisma, source });
 			}
 		}),
 	parameters: t.router({
