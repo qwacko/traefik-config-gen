@@ -11,7 +11,7 @@ export const processYAMLUpdate = async ({
 	prisma: PrismaClient;
 	source: Source;
 }) => {
-	if (source.type !== 'YAML') return;
+	if (source.type !== 'YAML' || !source.address) return;
 	const { data, error } = await loadYAML(source.address);
 
 	if (error) {
@@ -21,12 +21,12 @@ export const processYAMLUpdate = async ({
 		});
 	} else if (data) {
 		try {
-			//Loop through all services and upsert servie templates taht exist, and remove those that dont.
-			if (data.routerTemplate) {
+			//Loop through all services and upsert service templates taht exist, and remove those that dont.
+			if (data.routerTemplates) {
 				await upsertRouterTemplatesFromList({
 					prisma,
 					sourceId: source.id,
-					routerTemplates: data.routerTemplate,
+					routerTemplates: data.routerTemplates,
 					editable: false
 				});
 			}
@@ -45,11 +45,11 @@ export const processYAMLUpdate = async ({
 			});
 		}
 		try {
-			if (data.serviceTemplate) {
+			if (data.serviceTemplates) {
 				await upsertServiceTemplatesFromList({
 					prisma,
 					sourceId: source.id,
-					serviceTemplates: data.serviceTemplate,
+					serviceTemplates: data.serviceTemplates,
 					editable: false
 				});
 			}
@@ -72,7 +72,8 @@ export const processYAMLUpdate = async ({
 			// Loop through hosts and create / update / delete them
 			await upsertHostsFromList({
 				prisma,
-				source,
+				sourceId: source.id,
+				identifierId: source.id,
 				hosts: data.hosts,
 				editable: false
 			});

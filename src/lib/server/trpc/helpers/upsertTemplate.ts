@@ -10,7 +10,7 @@ export const upsertServiceTemplate = ({
 	editable = true
 }: {
 	prisma: PrismaClient;
-	sourceId: string;
+	sourceId?: string;
 	identifier: string;
 	template: TemplateConfig;
 	editable?: boolean;
@@ -33,16 +33,23 @@ export const upsertServiceTemplatesFromList = async ({
 	serviceTemplates,
 	prisma,
 	sourceId,
+	identifierId,
 	editable = true
 }: {
-	serviceTemplates: Record<string, TemplateConfig>;
+	serviceTemplates: Record<string, TemplateConfig> | undefined;
 	prisma: PrismaClient;
-	sourceId: string;
+	sourceId?: string;
+	identifierId?: string;
 	editable?: boolean;
 }) => {
+	if (!serviceTemplates) return;
 	await Promise.all(
 		Object.entries(serviceTemplates).map(async ([key, value]) => {
-			const identifier = `${sourceId}-${key}`;
+			const identifier = identifierId
+				? `${identifierId}-${key}`
+				: sourceId
+				? `${sourceId}-${key}`
+				: key;
 
 			await upsertServiceTemplate({
 				identifier,
@@ -71,7 +78,7 @@ export const upsertRouterTemplate = ({
 	editable = true
 }: {
 	prisma: PrismaClient;
-	sourceId: string;
+	sourceId?: string;
 	identifier: string;
 	template: TemplateConfig;
 	editable?: boolean;
@@ -94,16 +101,23 @@ export const upsertRouterTemplatesFromList = async ({
 	routerTemplates,
 	prisma,
 	sourceId,
+	identifierId,
 	editable = true
 }: {
-	routerTemplates: Record<string, TemplateConfig>;
+	routerTemplates: Record<string, TemplateConfig> | undefined;
 	prisma: PrismaClient;
-	sourceId: string;
+	sourceId?: string;
+	identifierId?: string;
 	editable?: boolean;
 }) => {
+	if (!routerTemplates) return;
 	await Promise.all(
 		Object.entries(routerTemplates).map(async ([key, value]) => {
-			const identifier = `${sourceId}-${key}`;
+			const identifier = identifierId
+				? `${identifierId}-${key}`
+				: sourceId
+				? `${sourceId}-${key}`
+				: key;
 
 			console.log('Identifier', identifier);
 

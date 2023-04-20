@@ -14,6 +14,7 @@ import { idSchema } from '$lib/schema/idSchema';
 import { processYAMLUpdate } from '../helpers/processYAMLUpdate';
 import { processDockerUpdate } from '../helpers/processDockerUpdate';
 
+
 export const sourceRouter = t.router({
 	getSource: t.procedure
 		.use(authMiddleware)
@@ -33,7 +34,9 @@ export const sourceRouter = t.router({
 		.query(async ({ ctx }) => {
 			const data = await ctx.prisma.source.findMany({
 				include: { _count: { select: { Host: true } }, parameters: true }
-			});
+			});			
+
+
 			return data;
 		}),
 	addSource: t.procedure

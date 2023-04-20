@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient, Source } from '@prisma/client';
+import type { Prisma, PrismaClient } from '@prisma/client';
 
 type ConfigurationType = {
 	title: string;
@@ -10,13 +10,13 @@ type ConfigurationType = {
 export const upsertHost = async ({
 	prisma,
 	identifier,
-	source,
+	sourceId,
 	configuration,
 	editable
 }: {
 	prisma: PrismaClient;
 	identifier: string;
-	source: Source;
+	sourceId?: string;
 	configuration: ConfigurationType;
 	editable?: boolean;
 }) => {
@@ -24,7 +24,7 @@ export const upsertHost = async ({
 		where: {
 			OR: [
 				{ title: configuration.routerTemplate },
-				{ identifier: `${source.id}-${configuration.routerTemplate}` }
+				{ identifier: `${identifier}-${configuration.routerTemplate}` }
 			]
 		}
 	});
@@ -33,13 +33,13 @@ export const upsertHost = async ({
 		where: {
 			OR: [
 				{ title: configuration.serviceTemplate },
-				{ identifier: `${source.id}-${configuration.serviceTemplate}` }
+				{ identifier: `${identifier}-${configuration.serviceTemplate}` }
 			]
 		}
 	});
 
-	const serviceTemplateId = serviceTemplate ? serviceTemplate.id : source.defaultServiceTemplateId;
-	const routerTemplateId = routerTemplate ? routerTemplate.id : source.defaultRouterTemplateId;
+	const serviceTemplateId = serviceTemplate ? serviceTemplate.id : undefined;
+	const routerTemplateId = routerTemplate ? routerTemplate.id : undefined;
 
 	const updateHost = {
 		title: configuration.title,
@@ -55,6 +55,7 @@ export const upsertHost = async ({
 				id: routerTemplateId
 			}
 		},
+		source: sourceId ? { connect: { id: sourceId } } : undefined,
 		parameters: configuration.parameters
 			? {
 					create: Object.entries(configuration.parameters).map(([pKey, pItem]) => ({
@@ -69,11 +70,11 @@ export const upsertHost = async ({
 		...updateHost,
 		identifier,
 		editable,
-		source: { connect: { id: source.id } }
+		source: { connect: { id: sourceId } }
 	} satisfies Prisma.HostCreateInput;
 
 	const host = await prisma.host.findFirst({
-		where: { identifier, sourceId: source.id },
+		where: { identifier, sourceId: sourceId },
 		include: { parameters: true, router: true, source: true, service: true }
 	});
 
@@ -87,30 +88,33 @@ export const upsertHost = async ({
 
 export const upsertHostsFromList = async ({
 	prisma,
-	source,
+	sourceId,
+	identifierId,
 	hosts,
 	editable = true
 }: {
 	prisma: PrismaClient;
-	source: Source;
-	hosts: Record<string, ConfigurationType>;
+	sourceId?: string;
+	identifierId: string;
+	hosts: Record<string, ConfigurationType> | undefined;
 	editable?: boolean;
 }) => {
+	if (!hosts) return;
 	for (const [key, value] of Object.entries(hosts)) {
-		const identifier = `${source.id}-${key}`;
+		const identifier = `${identifierId}-${key}`;
 
 		await upsertHost({
 			identifier,
-			source,
+			sourceId,
 			prisma: prisma,
 			configuration: value,
 			editable
 		});
 	}
 
-	const identifiers = Object.entries(hosts).map(([key]) => `${source.id}-${key}`);
+	const identifiers = Object.entries(hosts).map(([key]) => `${sourceId}-${key}`);
 
 	await prisma.host.deleteMany({
-		where: { identifier: { notIn: identifiers }, sourceId: source.id }
+		where: { identifier: { notIn: identifiers }, sourceId: sourceId }
 	});
 };

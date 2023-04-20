@@ -77,8 +77,9 @@ model ServiceTemplate {
 model Source {
   id                       String            @id @unique @default(cuid())
   title                    String            @unique
+  identifier               String?           @unique
   type                     String
-  address                  String
+  address                  String?
   autoDelete               Boolean           @default(false)
   autoUpdate               Boolean           @default(false)
   enabled                  Boolean           @default(true)

@@ -22,7 +22,11 @@ export const load = async (event) => {
 		throw redirect(302, '/sources');
 	}
 
-	const updateForm = await superValidate(currentData, sourceUpdateValidation, { id: updateFormId });
+	const updateForm = await superValidate(
+		{ ...currentData, address: currentData.address || undefined },
+		sourceUpdateValidation,
+		{ id: updateFormId }
+	);
 	const addParameterForm = await superValidate(event, sourceAddParameterSchema, {
 		id: addParameterFormId
 	});

@@ -76,7 +76,7 @@ export const processDockerUpdate = async ({
 	prisma: PrismaClient;
 	source: Source;
 }) => {
-	if (source.type !== 'Docker') return;
+	if (source.type !== 'Docker' || !source.address) return;
 
 	const { data, error } = await loadDocker({ address: source.address, source });
 
@@ -87,12 +87,12 @@ export const processDockerUpdate = async ({
 		});
 	} else if (data) {
 		try {
-			if (data.routerTemplate) {
+			if (data.routerTemplates) {
 				//Loop through all services and upsert servie templates taht exist, and remove those that dont.
 				await upsertRouterTemplatesFromList({
 					prisma,
 					sourceId: source.id,
-					routerTemplates: data.routerTemplate,
+					routerTemplates: data.routerTemplates,
 					editable: false
 				});
 			}
@@ -111,11 +111,11 @@ export const processDockerUpdate = async ({
 			});
 		}
 		try {
-			if (data.serviceTemplate) {
+			if (data.serviceTemplates) {
 				await upsertServiceTemplatesFromList({
 					prisma,
 					sourceId: source.id,
-					serviceTemplates: data.serviceTemplate,
+					serviceTemplates: data.serviceTemplates,
 					editable: false
 				});
 			}
@@ -138,7 +138,8 @@ export const processDockerUpdate = async ({
 			// Loop through hosts and create / update / delete them
 			await upsertHostsFromList({
 				prisma,
-				source,
+				identifierId: source.id,
+				sourceId: source.id,
 				hosts: data.hosts,
 				editable: false
 			});
