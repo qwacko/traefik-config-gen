@@ -1,71 +1,97 @@
 import { yamlDataSchema } from '$lib/schema/yamlDataSchema';
 import type { PrismaClient, Source } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import Docker from 'dockerode';
+// import Docker from 'dockerode';
 import { upsertHostsFromList } from './upsertHost';
 import { upsertRouterTemplatesFromList, upsertServiceTemplatesFromList } from './upsertTemplate';
+import { exec } from 'child_process';
+import util from 'node:util';
+import { z } from 'zod';
+
+const execAsync = util.promisify(exec);
 
 const loadDocker = async ({ address, source }: { address: string; source: Source }) => {
 	try {
-		const docker = new Docker({ socketPath: address });
+		// const docker = new Docker({ socketPath: address });
 
-		const containers = await docker.listContainers();
-		const filteredContainers = containers
-			.filter((item) => {
-				const labels = Object.keys(item.Labels);
-				const retain = labels.reduce((acc, label) => {
-					if (label.startsWith('traefikConfigGen.')) {
-						return true;
-					}
-					return acc;
-				}, false);
+		// const containers = await docker.listContainers();
+		const data = await execAsync(`curl --unix-socket ${address} http://localhost/containers/json`);
+		if (data.stdout && data.stdout.length > 0) {
+			const dataFormat = z.array(
+				z.object({
+					Names: z.array(z.string()),
+					Labels: z.record(z.string()),
+					Id: z.string()
+				})
+			);
 
-				return retain;
-			})
-			.reduce((prev, item) => {
-				const foundName = item.Names[0].replace('/', '');
-				const replacedName = foundName && foundName.length > 0 ? foundName : item.Id;
-				const title = `${replacedName} (${source.title})`;
-				const identifier = `${source.id}-${replacedName}`;
-				const parameters = Object.keys(item.Labels)
-					.filter(
-						(label) =>
-							label.startsWith('traefikConfigGen.') &&
-							!label.startsWith('traefikConfigGen.serviceTemplateName') &&
-							!label.startsWith('traefikConfigGen.routerTemplateName')
+			const containers = dataFormat.parse(JSON.parse(data.stdout));
+
+			const filteredContainers = containers
+				.filter((item) => {
+					const labels = Object.keys(item.Labels);
+					const retain = labels.reduce((acc, label) => {
+						if (label.startsWith('traefikConfigGen.')) {
+							return true;
+						}
+						return acc;
+					}, false);
+
+					return retain;
+				})
+				.reduce((prev, item) => {
+					const foundName = item.Names[0].replace('/', '');
+					const replacedName = foundName && foundName.length > 0 ? foundName : item.Id;
+					const title = `${replacedName} (${source.title})`;
+					const identifier = `${source.id}-${replacedName}`;
+					const parameters = Object.keys(item.Labels)
+						.filter(
+							(label) =>
+								label.startsWith('traefikConfigGen.') &&
+								!label.startsWith('traefikConfigGen.serviceTemplateName') &&
+								!label.startsWith('traefikConfigGen.routerTemplateName')
+						)
+						.reduce<Record<string, string>>((acc, label) => {
+							const key = label.replace('traefikConfigGen.', '');
+							const value = item.Labels[label];
+							return { ...acc, [key]: value };
+						}, {});
+					const serviceTemplate = Object.keys(item.Labels).find((label) =>
+						label.startsWith('traefikConfigGen.serviceTemplateName')
 					)
-					.reduce<Record<string, string>>((acc, label) => {
-						const key = label.replace('traefikConfigGen.', '');
-						const value = item.Labels[label];
-						return { ...acc, [key]: value };
-					}, {});
-				const serviceTemplate = Object.keys(item.Labels).find((label) =>
-					label.startsWith('traefikConfigGen.serviceTemplateName')
-				)
-					? item.Labels['traefikConfigGen.serviceTemplateName']
-					: undefined;
-				const routerTemplate = Object.keys(item.Labels).find((label) =>
-					label.startsWith('traefikConfigGen.routerTemplateName')
-				)
-					? item.Labels['traefikConfigGen.routerTemplateName']
-					: undefined;
+						? item.Labels['traefikConfigGen.serviceTemplateName']
+						: undefined;
+					const routerTemplate = Object.keys(item.Labels).find((label) =>
+						label.startsWith('traefikConfigGen.routerTemplateName')
+					)
+						? item.Labels['traefikConfigGen.routerTemplateName']
+						: undefined;
 
-				return {
-					...prev,
-					[identifier]: { title, parameters, serviceTemplate, routerTemplate }
-				};
-			}, {});
-		const validatedData = yamlDataSchema.safeParse({ hosts: filteredContainers });
+					return {
+						...prev,
+						[identifier]: { title, parameters, serviceTemplate, routerTemplate }
+					};
+				}, {});
+			const validatedData = yamlDataSchema.safeParse({ hosts: filteredContainers });
 
-		if (!validatedData.success) {
-			console.error('Docker Data Load Error', JSON.stringify(validatedData.error, null, 2));
-			return { data: undefined, error: 'Error Loading Data, incorrect format' };
+			if (!validatedData.success) {
+				console.error('Docker Data Load Error', JSON.stringify(validatedData.error, null, 2));
+				return { data: undefined, error: 'Error Loading Data, incorrect format' };
+			}
+
+			console.log('Validated Data', validatedData.data);
+			return { data: validatedData.data, error: undefined };
+		} else if (data.stderr && data.stderr.length > 0) {
+			console.log('Data Is Here', data);
+			console.log('Loading Error', data.stderr);
+			return { data: undefined, error: 'Error Loading Docker Data 3' };
+		} else {
+			console.log('Docker Data Load Error', data);
+			return { data: undefined, error: 'Error Loading Docker Data 2' };
 		}
-
-		return { data: validatedData.data, error: undefined };
 	} catch (e) {
 		console.log('Docker Data Load Error', e);
-		return { data: undefined, error: 'Error Loading Docker Data' };
+		return { data: undefined, error: 'Error Loading Docker Data 1' };
 	}
 };
 
