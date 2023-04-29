@@ -11,5 +11,11 @@
 				YAML - {source.title}
 			</a>
 		</Row>
+	{:else if source.type === 'Docker'}
+		<Row>
+			<a href="/sources/{source.id}" class="badge variant-ghost-tertiary">
+				Docker - {source.title}
+			</a>
+		</Row>
 	{/if}
 {/if}

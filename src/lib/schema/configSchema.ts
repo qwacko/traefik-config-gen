@@ -4,19 +4,30 @@ import { singleLevelRecordSchema, yamlDataSchema } from './yamlDataSchema';
 
 export const configSchema = z
 	.object({
-		sources: z.record(
-			z.object({
-				title: z.string(),
-				type: z.enum(sourceTypeOptions).default('Manual'),
-				address: z.string().optional(),
-				autoDelete: booleanSchemaFromString(false),
-				autoUpdate: booleanSchemaFromString(false),
-				enabled: booleanSchemaFromString(true),
-				parameters: singleLevelRecordSchema.optional().default({}),
-				routerTemplate: z.string(),
-				serviceTemplate: z.string()
-			})
-		)
+		sources: z
+			.record(
+				z.object({
+					title: z.string(),
+					type: z.enum(sourceTypeOptions).default('Manual'),
+					address: z.string().optional(),
+					autoDelete: booleanSchemaFromString(false),
+					autoUpdate: booleanSchemaFromString(false),
+					enabled: booleanSchemaFromString(true),
+					parameters: singleLevelRecordSchema.optional().default({}),
+					routerTemplate: z.string(),
+					serviceTemplate: z.string()
+				})
+			)
+			.optional(),
+		outputs: z
+			.record(
+				z.object({
+					title: z.string(),
+					address: z.string(),
+					autoUpdate: booleanSchemaFromString(true)
+				})
+			)
+			.optional()
 	})
 	.merge(yamlDataSchema);
 

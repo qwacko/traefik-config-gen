@@ -13,9 +13,9 @@ export const upsertConfigSources = async ({
 	const sourcesToDelete = await prisma.source.findMany({
 		where: {
 			type: 'Config',
-			identifier: {
-				notIn: Object.entries(config.sources).map(([key]) => `config-${key}`)
-			}
+			identifier: config.sources
+				? { notIn: Object.entries(config.sources).map(([key]) => `config-${key}`) }
+				: undefined
 		},
 		select: {
 			_count: {
@@ -43,6 +43,8 @@ export const upsertConfigSources = async ({
 			// }
 		}
 	});
+
+	if (!config.sources) return;
 
 	//Using For rather than object map to reduce risk of connection issues to SQLite DB (Makes this sequential rather than parallel)
 	for (const [key, value] of Object.entries(config.sources)) {
