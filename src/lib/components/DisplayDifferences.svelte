@@ -5,6 +5,9 @@
 	export let compact: boolean = true;
 
 	let expanded = compact;
+
+	const unexpand = () => (expanded = false);
+	const expand = () => (expanded = true);
 </script>
 
 {#if input}
@@ -15,9 +18,17 @@
 			{:else if currentChange.removed}
 				<del>{currentChange.value}</del>
 			{:else if expanded}
-				<span on:click={() => (expanded = false)}>{currentChange.value}</span>
+				<span
+					on:click={unexpand}
+					on:keydown={unexpand}
+					on:keyup={unexpand}
+					on:keypress={unexpand}>{currentChange.value}</span>
 			{:else}
-				<span on:click={() => (expanded = true)}>...</span>
+				<span
+					on:click={expand}
+					on:keydown={expand}
+					on:keyup={expand}
+					on:keypress={expand}>...</span>
 			{/if}
 		{/each}
     </pre>

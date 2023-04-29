@@ -1,6 +1,6 @@
 import { updateOutputCurrentSchema } from '$lib/schema/outputSchema.js';
 import { fail, redirect } from '@sveltejs/kit';
-import diff from 'diff';
+import { diffJson } from 'diff';
 import { superValidate } from 'sveltekit-superforms/server';
 
 export const load = async (event) => {
@@ -22,7 +22,7 @@ export const load = async (event) => {
 	// 		: [];
 
 	const differences =
-		latest && generatedOutput ? diff.diffJson(JSON.parse(latest.output), generatedOutput) : [];
+		latest && generatedOutput ? diffJson(JSON.parse(latest.output), generatedOutput) : [];
 
 	const updateForm = superValidate(
 		{
