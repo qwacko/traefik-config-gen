@@ -20,6 +20,6 @@ export const serverEnv = serverEnvValidation.parse({
 	ORIGIN: env.ORIGIN,
 	HTTPS: env.HTTPS,
 	DEV: dev,
-	CSRF_CHECK_ORIGIN: process.env.CSRF_CHECK_ORIGIN,
+	CSRF_CHECK_ORIGIN: env.CSRF_CHECK_ORIGIN,
 	CONFIG_FILE: env.CONFIG_FILE
 });
