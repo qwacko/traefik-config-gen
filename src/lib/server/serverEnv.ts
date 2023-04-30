@@ -7,26 +7,31 @@ const serverEnvValidation = z
 		ORIGIN: z.string().url().optional(),
 		HTTPS: z.coerce.boolean(),
 		DEV: z.coerce.boolean(),
+		DEV_OVERRIDE: z.coerce.boolean().optional().default(false),
 		CSRF_CHECK_ORIGIN: z.coerce.boolean(),
 		CONFIG_FILE: z.string().optional().default('./config.yaml'),
 		DEBUG: z.coerce.boolean().optional(),
-		// DEBUG_CLASSES is a string containing an array of logging levels to enable ("ERROR","WARN","INFO","DEBUG","TRACE")
 		DEBUG_CLASSES: z
 			.string()
 			.optional()
 			.default('ERROR,WARN,INFO')
 			.transform((data) => data.split(',').map((d) => d.trim().toUpperCase()))
 	})
-	.transform((data) => ({
-		...data,
-		LUCIADEV: (data.DEV ? 'DEV' : data.HTTPS ? 'PROD' : 'DEV') as 'DEV' | 'PROD',
-		ORIGINS: data.ORIGIN ? data.ORIGIN.split(',') : undefined
-	}));
+	.transform((data) => {
+		const isDev = data.DEV || data.DEV_OVERRIDE;
+		return {
+			...data,
+			DEV: isDev,
+			LUCIADEV: (isDev ? 'DEV' : 'PROD') as 'DEV' | 'PROD',
+			ORIGINS: data.ORIGIN ? data.ORIGIN.split(',') : undefined
+		};
+	});
 
 export const serverEnv = serverEnvValidation.parse({
 	ORIGIN: env.ORIGIN,
 	HTTPS: env.HTTPS,
 	DEV: dev,
+	DEV_OVERRIDE: env.DEV,
 	CSRF_CHECK_ORIGIN: env.CSRF_CHECK_ORIGIN,
 	CONFIG_FILE: env.CONFIG_FILE,
 	DEBUG: env.DEBUG,
