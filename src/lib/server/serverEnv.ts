@@ -14,7 +14,7 @@ const serverEnvValidation = z
 		DEBUG_CLASSES: z
 			.string()
 			.optional()
-			.default('ERROR')
+			.default('ERROR,WARN,INFO')
 			.transform((data) => data.split(',').map((d) => d.trim().toUpperCase()))
 	})
 	.transform((data) => ({
