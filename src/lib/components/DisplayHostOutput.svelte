@@ -15,7 +15,10 @@
 			<pre>{JSON.stringify(host.variables, undefined, 2)}</pre>
 			<h3>Variables Used</h3>
 			<pre>{JSON.stringify(
-					getVariableGroups([host.router?.template || '', host.service?.template || "'"]),
+					getVariableGroups([
+						host.router?.template || host.source.defaultRouter.template,
+						host.service?.template || host.source.defaultService.template
+					]),
 					undefined,
 					2
 				)}</pre>
