@@ -41,7 +41,10 @@ export const serverEnv = serverEnvValidation.parse({
 type logClasses = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG' | 'TRACE';
 type logParams = Parameters<typeof console.log>;
 export const debugFunction = (logClass: logClasses = 'INFO', ...params: logParams) => {
-	if (serverEnv.DEBUG) console.log(logClass, ...params);
+	if (serverEnv.DEBUG) {
+		const time = new Date().toISOString();
+		console.log(`${time} - ${logClass} : `, ...params);
+	}
 };
 
 export const debug = {
