@@ -15,8 +15,8 @@ const loadDocker = async ({ address, source }: { address: string; source: Source
 	try {
 		const data = await execAsync(`curl --unix-socket ${address} http://localhost/containers/json`);
 		if (data.stdout && data.stdout.length > 0) {
-			debug.info('Docker Data Length: ', data.stdout.length);
-			debug.info('Docker Data First 100 Chars: ', data.stdout.substring(0, 100));
+			debug.trace('Docker Data Length: ', data.stdout.length);
+			debug.trace('Docker Data First 100 Chars: ', data.stdout.substring(0, 100));
 
 			const dataFormat = z.array(
 				z.object({
@@ -27,6 +27,8 @@ const loadDocker = async ({ address, source }: { address: string; source: Source
 			);
 
 			const containers = dataFormat.parse(JSON.parse(data.stdout));
+
+			debug.trace('Docker Containers: ', containers);
 
 			const filteredContainers = containers
 				.filter((item) => {
@@ -80,7 +82,8 @@ const loadDocker = async ({ address, source }: { address: string; source: Source
 				return { data: undefined, error: 'Error Loading Data, incorrect format' };
 			}
 
-			debug.info('Validated Data', validatedData.data);
+			debug.trace('Validated Data', validatedData.data);
+			debug.info(`Docker Data updated from ${source.address}`);
 			return { data: validatedData.data, error: undefined };
 		} else if (data.stderr && data.stderr.length > 0) {
 			debug.error('Docker Data Load Error', data.stderr);
