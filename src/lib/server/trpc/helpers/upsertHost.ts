@@ -1,4 +1,5 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
+import { debug } from '$lib/server/serverEnv';
 
 type ConfigurationType = {
 	title: string;
@@ -20,6 +21,7 @@ export const upsertHost = async ({
 	configuration: ConfigurationType;
 	editable?: boolean;
 }) => {
+	debug.trace('Upserting Host', { sourceId, editable, identifier, configuration });
 	const routerTemplate = await prisma.routerTemplate.findFirst({
 		where: {
 			OR: [
@@ -38,6 +40,8 @@ export const upsertHost = async ({
 		}
 	});
 
+	debug.trace('Found Existing Templates', { routerTemplate, serviceTemplate });
+
 	const serviceTemplateId = serviceTemplate ? serviceTemplate.id : undefined;
 	const routerTemplateId = routerTemplate ? routerTemplate.id : undefined;
 
@@ -45,16 +49,20 @@ export const upsertHost = async ({
 		title: configuration.title,
 		lastSeen: new Date(),
 		editable,
-		service: {
-			connect: {
-				id: serviceTemplateId
-			}
-		},
-		router: {
-			connect: {
-				id: routerTemplateId
-			}
-		},
+		service: serviceTemplateId
+			? {
+					connect: {
+						id: serviceTemplateId
+					}
+			  }
+			: undefined,
+		router: routerTemplateId
+			? {
+					connect: {
+						id: routerTemplateId
+					}
+			  }
+			: undefined,
 		source: sourceId ? { connect: { id: sourceId } } : undefined,
 		parameters: configuration.parameters
 			? {
@@ -79,9 +87,11 @@ export const upsertHost = async ({
 	});
 
 	if (host) {
+		debug.trace('Updating Host', { host, updateHost });
 		await prisma.parameter.deleteMany({ where: { hostId: host.id } });
 		await prisma.host.update({ where: { id: host.id }, data: updateHost });
 	} else {
+		debug.trace('Creating Host', { newHostCreation });
 		await prisma.host.create({ data: newHostCreation });
 	}
 };

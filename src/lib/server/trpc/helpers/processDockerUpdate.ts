@@ -127,7 +127,7 @@ export const processDockerUpdate = async ({
 				});
 			}
 		} catch (e) {
-			console.log(e);
+			debug.error('Error Updating Router Templates', e);
 			await prisma.source.update({
 				where: { id: source.id },
 				data: {
@@ -150,7 +150,7 @@ export const processDockerUpdate = async ({
 				});
 			}
 		} catch (e) {
-			console.log(e);
+			debug.error('Error Updating Service Templates', e);
 			await prisma.source.update({
 				where: { id: source.id },
 				data: {
@@ -174,7 +174,7 @@ export const processDockerUpdate = async ({
 				editable: false
 			});
 		} catch (e) {
-			console.log(e);
+			debug.error('Error Updating Hosts', e);
 
 			await prisma.source.update({
 				where: { id: source.id },
