@@ -7,16 +7,17 @@ import { upsertRouterTemplatesFromList, upsertServiceTemplatesFromList } from '.
 import { exec } from 'child_process';
 import util from 'node:util';
 import { z } from 'zod';
+import { debug } from '$lib/server/serverEnv';
 
 const execAsync = util.promisify(exec);
 
 const loadDocker = async ({ address, source }: { address: string; source: Source }) => {
 	try {
-		// const docker = new Docker({ socketPath: address });
-
-		// const containers = await docker.listContainers();
 		const data = await execAsync(`curl --unix-socket ${address} http://localhost/containers/json`);
 		if (data.stdout && data.stdout.length > 0) {
+			debug.info('Docker Data Length: ', data.stdout.length);
+			debug.info('Docker Data First 100 Chars: ', data.stdout.substring(0, 100));
+
 			const dataFormat = z.array(
 				z.object({
 					Names: z.array(z.string()),
@@ -75,22 +76,22 @@ const loadDocker = async ({ address, source }: { address: string; source: Source
 			const validatedData = yamlDataSchema.safeParse({ hosts: filteredContainers });
 
 			if (!validatedData.success) {
-				console.error('Docker Data Load Error', JSON.stringify(validatedData.error, null, 2));
+				debug.error('Docker Data Load Error', JSON.stringify(validatedData.error, null, 2));
 				return { data: undefined, error: 'Error Loading Data, incorrect format' };
 			}
 
-			console.log('Validated Data', validatedData.data);
+			debug.info('Validated Data', validatedData.data);
 			return { data: validatedData.data, error: undefined };
 		} else if (data.stderr && data.stderr.length > 0) {
-			console.log('Data Is Here', data);
-			console.log('Loading Error', data.stderr);
+			debug.error('Docker Data Load Error', data.stderr);
+			debug.error('Docker Data Load Error', data);
 			return { data: undefined, error: 'Error Loading Docker Data 3' };
 		} else {
-			console.log('Docker Data Load Error', data);
+			debug.error('Docker Data Load Error', data);
 			return { data: undefined, error: 'Error Loading Docker Data 2' };
 		}
 	} catch (e) {
-		console.log('Docker Data Load Error', e);
+		debug.error('Docker Data Load Error', e);
 		return { data: undefined, error: 'Error Loading Docker Data 1' };
 	}
 };
