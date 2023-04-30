@@ -17,8 +17,8 @@ const authHandler: Handle = async ({ event, resolve }) => {
 	}
 
 	if (event.route.id?.startsWith('/(loggedOut)') && user) {
-		console.log('User Logged In - Redirecting to User');
-		return Response.redirect(`${event.url.origin}/user`, 302);
+		console.log('User Logged In - Redirecting to Sources');
+		return Response.redirect(`${event.url.origin}/sources`, 302);
 	}
 
 	return await resolve(event);
