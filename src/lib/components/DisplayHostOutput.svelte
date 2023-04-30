@@ -20,9 +20,15 @@
 					2
 				)}</pre>
 			<h3>Router</h3>
-			<DisplayExample template={host.router?.template} exampleData={host.variables} />
+			<DisplayExample
+				template={host.router?.template || host.source.defaultRouter.template}
+				exampleData={host.variables}
+			/>
 			<h3>Service</h3>
-			<DisplayExample template={host.service?.template} exampleData={host.variables} />
+			<DisplayExample
+				template={host.service?.template || host.source.defaultService.template}
+				exampleData={host.variables}
+			/>
 		</Stack>
 	</CenterCard>
 {/if}

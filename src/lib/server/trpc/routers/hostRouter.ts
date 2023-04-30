@@ -17,7 +17,12 @@ export const hostRouter = t.router({
 	get: t.procedure.input(z.object({ id: z.string().cuid() })).query(async ({ ctx, input }) => {
 		const host = await ctx.prisma.host.findUnique({
 			where: { id: input.id },
-			include: { source: true, router: true, service: true, parameters: true }
+			include: {
+				source: { include: { defaultRouter: true, defaultService: true } },
+				router: true,
+				service: true,
+				parameters: true
+			}
 		});
 
 		if (!host) {
