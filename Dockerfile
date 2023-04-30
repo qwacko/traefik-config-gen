@@ -1,29 +1,77 @@
-# start by pulling the python image
-FROM python:3.10-alpine
 
-# copy the requirements file into the image
-COPY ./requirements.txt /app/requirements.txt
+##### BUILDER
+FROM node:19-alpine AS deps
 
-# switch working directory
+WORKDIR /app
+COPY prisma ./
+
+COPY package.json  pnpm-lock.yaml pnpm-lock.yaml\* ./
+
+RUN yarn global add pnpm
+RUN pnpm i;
+
+##### BUILDER
+FROM node:19-alpine AS proddeps
+
+WORKDIR /app
+COPY prisma ./
+
+COPY package.json pnpm-lock.yaml pnpm-lock.yaml\* ./
+
+RUN yarn global add pnpm
+RUN pnpm i -P;
+
+
+
+
+##### BUILDER
+FROM node:19-alpine AS builder
+
+ENV DATABASE_URL file:./dev.db
+
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN yarn global add pnpm
+RUN pnpm build
+
+
+
+##### PRISMA
+FROM --platform=linux/amd64 node:19-alpine AS prisma
 WORKDIR /app
 
-# install the dependencies and packages in the requirements file
-RUN pip install -r requirements.txt
+ENV DATABASE_URL file:./dev.db
 
-# copy every content from the local file to the image
-COPY . /app
+COPY ./prisma ./prisma
 
-ENV TARGET_HOST=
-ENV HOST_NAME=
-ENV DEFAULT_ROUTER=
-ENV DEFAULT_SERVICE=
-ENV CHILD_HOSTS="[]"
+RUN npm init -y
+RUN npm install prisma --save-dev
 
-EXPOSE 5000
 
-VOLUME ["/var/run/docker.sock"]
+##### RUNNER
 
-# configure the container to run in an executed manner
-ENTRYPOINT [ "python" ]
+FROM --platform=linux/amd64 node:19-alpine AS runner
+WORKDIR /app
 
-CMD ["server.py" ]
+ENV DATABASE_URL file:./dev.db
+ENV NODE_ENV production
+ENV HTTPS true
+
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+COPY --from=proddeps /app/node_modules ./node_modules
+COPY package.json pnpm-lock.yaml\* ./
+COPY --from=builder /app/build ./build
+COPY --from=prisma /app ./prisma
+COPY dockerEntrypoint.sh /app/dockerEntrypoint.sh
+
+EXPOSE 3000
+ENV PORT 3000
+
+RUN chmod +x /app/dockerEntrypoint.sh
+RUN apk add curl
+
+ENTRYPOINT ["/app/dockerEntrypoint.sh"]
+CMD []

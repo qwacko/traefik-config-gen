@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AuthUser {
+  id       String        @id @unique
+  session  AuthSession[]
+  Key      AuthKey[]
+  username String?       @unique
+  // here you can add custom fields for your user
+  // e.g. name, email, username, roles, etc.
+
+  @@map("auth_user")
+}
+
+model AuthSession {
+  id             String   @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model AuthKey {
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  primary_key     Boolean
+  expires         BigInt?
+  user            AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}
+
+model RouterTemplate {
+  id             String   @id @unique @default(cuid())
+  identifier     String?  @unique
+  title          String   @unique
+  template       String
+  exampleData    String?
+  editable       Boolean  @default(true)
+  masterSource   Source?  @relation(name: "sourceRouterTemplates", fields: [masterSourceId], references: [id])
+  masterSourceId String?
+  Source         Source[]
+  Host           Host[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ServiceTemplate {
+  id             String   @id @unique @default(cuid())
+  identifier     String?  @unique
+  title          String   @unique
+  template       String
+  exampleData    String?
+  editable       Boolean  @default(true)
+  masterSource   Source?  @relation(name: "sourceServiceTemplates", fields: [masterSourceId], references: [id])
+  masterSourceId String?
+  Source         Source[]
+  Host           Host[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Source {
+  id                       String            @id @unique @default(cuid())
+  title                    String            @unique
+  identifier               String?           @unique
+  type                     String
+  address                  String?
+  autoDelete               Boolean           @default(false)
+  autoUpdate               Boolean           @default(false)
+  enabled                  Boolean           @default(true)
+  parameters               Parameter[]
+  lastRefresh              DateTime?
+  lastRefreshData          String?
+  lastRefreshErrors        String?
+  lastRefreshErrorsDate    DateTime?
+  defaultRouter            RouterTemplate    @relation(fields: [defaultRouterTemplateId], references: [id])
+  defaultRouterTemplateId  String
+  defaultService           ServiceTemplate   @relation(fields: [defaultServiceTemplateId], references: [id])
+  defaultServiceTemplateId String
+  ownedServiceTemplates    ServiceTemplate[] @relation(name: "sourceServiceTemplates")
+  ownedRouterTemplates     RouterTemplate[]  @relation(name: "sourceRouterTemplates")
+  Host                     Host[]
+  includedIn               OutputConfig[]    @relation(name: "outputConfigIncludedSources")
+  excludedFrom             OutputConfig[]    @relation(name: "outputConfigExcludedSources")
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+}
+
+model Host {
+  id                String           @id @unique @default(cuid())
+  title             String           @unique
+  identifier        String?          @unique
+  parameters        Parameter[]
+  editable          Boolean          @default(true)
+  lastSeen          DateTime
+  errors            String?
+  source            Source           @relation(fields: [sourceId], references: [id])
+  sourceId          String
+  customRouter      String?
+  router            RouterTemplate?  @relation(fields: [routerTemplateId], references: [id])
+  routerTemplateId  String?
+  customService     String?
+  service           ServiceTemplate? @relation(fields: [serviceTemplateId], references: [id])
+  serviceTemplateId String?
+  includedIn        OutputConfig[]   @relation(name: "outputConfigIncludedHosts")
+  excludedFrom      OutputConfig[]   @relation(name: "outputConfigExcludedHosts")
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model Parameter {
+  id    String @id @unique @default(cuid())
+  label String
+  value String
+
+  host   Host?   @relation(fields: [hostId], references: [id])
+  hostId String?
+
+  source   Source? @relation(fields: [sourceId], references: [id])
+  sourceId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hostId, sourceId, label], name: "host_source_label")
+}
+
+model OutputConfig {
+  id              String          @id @unique @default(cuid())
+  title           String          @unique
+  address         String          @unique
+  currentOutput   String
+  outputHistory   OutputHistory[]
+  includedHosts   Host[]          @relation(name: "outputConfigIncludedHosts")
+  excludedHosts   Host[]          @relation(name: "outputConfigExcludedHosts")
+  includedSources Source[]        @relation(name: "outputConfigIncludedSources")
+  excludedSources Source[]        @relation(name: "outputConfigExcludedSources")
+  autoUpdate      Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model OutputHistory {
+  id          String       @id @unique @default(cuid())
+  current     Boolean      @default(false)
+  changeTitle String
+  output      String
+  config      OutputConfig @relation(fields: [configId], references: [id])
+  configId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}

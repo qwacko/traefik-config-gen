@@ -7,9 +7,9 @@ name: Docker
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ['master', 'dev']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master', 'dev']
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -17,10 +17,8 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,7 +38,6 @@ jobs:
         uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
         with:
           cosign-release: 'v1.11.0'
-
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
@@ -77,16 +74,15 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+      # # Sign the resulting Docker image digest except on PRs.
+      # # This will only write to the public Rekor transparency log when the Docker
+      # # repository is public to avoid leaking data.  If you would like to publish
+      # # transparency data even for private images, pass --force to cosign below.
+      # # https://github.com/sigstore/cosign
+      # - name: Sign the published Docker image
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   env:
+      #     COSIGN_EXPERIMENTAL: 'true'
+      #   # This step uses the identity token to provision an ephemeral certificate
+      #   # against the sigstore community Fulcio instance.
+      #   run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
