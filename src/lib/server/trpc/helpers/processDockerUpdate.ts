@@ -13,7 +13,10 @@ const execAsync = util.promisify(exec);
 
 const loadDocker = async ({ address, source }: { address: string; source: Source }) => {
 	try {
-		const data = await execAsync(`curl --unix-socket ${address} http://localhost/containers/json`);
+		const isSocket = address.startsWith('/');
+		const data = isSocket
+			? await execAsync(`curl --unix-socket ${address} http://localhost/containers/json`)
+			: await execAsync(`curl ${address}/containers/json`);
 		if (data.stdout && data.stdout.length > 0) {
 			debug.trace('Docker Data Length: ', data.stdout.length);
 			debug.trace('Docker Data First 100 Chars: ', data.stdout.substring(0, 100));
