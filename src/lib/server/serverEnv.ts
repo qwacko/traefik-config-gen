@@ -8,7 +8,8 @@ const serverEnvValidation = z
 		HTTPS: z.coerce.boolean(),
 		DEV: z.coerce.boolean(),
 		CSRF_CHECK_ORIGIN: z.coerce.boolean(),
-		CONFIG_FILE: z.string().optional().default('./config.yaml')
+		CONFIG_FILE: z.string().optional().default('./config.yaml'),
+		DEBUG: z.coerce.boolean().optional()
 	})
 	.transform((data) => ({
 		...data,
@@ -21,5 +22,8 @@ export const serverEnv = serverEnvValidation.parse({
 	HTTPS: env.HTTPS,
 	DEV: dev,
 	CSRF_CHECK_ORIGIN: env.CSRF_CHECK_ORIGIN,
-	CONFIG_FILE: env.CONFIG_FILE
+	CONFIG_FILE: env.CONFIG_FILE,
+	DEBUG: env.DEBUG
 });
+
+if (serverEnv.DEBUG) console.log('Server Env', serverEnv);
